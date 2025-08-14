@@ -1,0 +1,16 @@
+:80 {
+	log {
+		output stdout
+		format console
+	}
+
+	handle /api/* {
+		reverse_proxy {$CADDY_BACKEND_PROXY_URL}
+	}
+
+	handle {
+		root * /srv
+		file_server
+		try_files {path} /index.html
+	}
+}

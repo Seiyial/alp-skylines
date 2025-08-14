@@ -1,0 +1,33 @@
+{
+	"name": "skyline-backend",
+	"scripts": {
+		"dev": "bun run --hot --watch main.ts",
+		"db": "cd backend && prisma generate && cd ..",
+		"db-migrate": "cd backend && prisma migrate dev && cd ..",
+		"db-deploy": "cd backend && prisma migrate deploy && cd ..",
+		"db-deploy-and-start": "prisma migrate deploy && bun run main.ts",
+		"create-user": "bun bin/create-user.ts"
+	},
+	"type": "module",
+	"dependencies": {
+		"@elysiajs/cors": "^1.3.3",
+		"@elysiajs/trpc": "^1.1.0",
+		"@elysiajs/websocket": "^0.2.8",
+		"@epic-web/invariant": "^1.0.0",
+		"@node-rs/argon2": "^2.0.2",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"@prisma/client": "^6.14.0",
+		"@t3-oss/env-core": "^0.13.8",
+		"@trpc/server": "^11.4.4",
+		"date-fns": "^4.1.0",
+		"elysia": "^1.3.8",
+		"superjson": "^2.2.2",
+		"zod": "^4.0.17"
+	},
+	"devDependencies": {
+		"@clack/prompts": "^0.11.0",
+		"bun-types": "^1.2.20",
+		"prisma": "^6.14.0"
+	}
+}

@@ -1,0 +1,14 @@
+# Alps Gitignore
+
+.env
+
+/node_modules/
+*/node_modules/
+/build/
+/dist/
+/out/
+
+/private/
+
+.DS_Store
+**/.DS_Store

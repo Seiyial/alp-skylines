@@ -1,0 +1,40 @@
+{
+	"name": "skyline-frontend",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"type": "module",
+	"dependencies": {
+		"@epic-web/invariant": "^1.0.0",
+		"@t3-oss/env-core": "^0.13.8",
+		"@tanstack/react-query": "^5.85.3",
+		"@trpc/client": "^10",
+		"@trpc/react-query": "^11.4.4",
+		"class-variance-authority": "^0.7.1",
+		"date-fns": "^4.1.0",
+		"framer-motion": "^12.23.12",
+		"immer": "^10.1.1",
+		"jotai": "^2.13.1",
+		"jotai-immer": "^0.4.1",
+		"lucide-react": "^0.539.0",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"sonner": "^2.0.7",
+		"superjson": "^2.2.2",
+		"use-immer": "^0.11.0",
+		"vaul": "^1.1.2",
+		"zod": "^4.0.17"
+	},
+	"devDependencies": {
+		"@tailwindcss/vite": "^4.1.12",
+		"@types/react": "^19.1.10",
+		"@types/react-dom": "^19.1.7",
+		"@vitejs/plugin-react-swc": "^4.0.0",
+		"bun-types": "^1.2.20",
+		"sass-embedded": "^1.90.0",
+		"tailwindcss": "^4.1.12",
+		"vite": "^7.1.2",
+		"vite-tsconfig-paths": "^5.1.4"
+	}
+}
