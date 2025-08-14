@@ -1,34 +1,39 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
 
 @theme {
 
-	--font-sans: 'Sora Variable', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--font-sans: 'Plus Jakarta Sans Variable', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
 
 	--color-*: initial;
-	--color-neutral-50: #f9fafb;
-	--color-neutral-100: #f3f4f6;
-	--color-neutral-200: #e5e7eb;
-	--color-neutral-300: #d1d5db;
-	--color-neutral-400: #9ca3af;
-	--color-neutral-500: #6b7280;
-	--color-neutral-600: #4b5563;
-	--color-neutral-700: #374151;
-	--color-neutral-800: #1f2937;
-	--color-neutral-900: #111827;
-	--color-neutral-950: #0f172a;
+	--color-neutral-50: #f7f8f7;
+	--color-neutral-100: #f1f2f1;
+	--color-neutral-200: #e4e6e6;
+	--color-neutral-300: #cfd2d1;
+	--color-neutral-400: #b0b6b6;
+	--color-neutral-500: #a2a9a9;
+	--color-neutral-600: #7d8585;
+	--color-neutral-700: #676e6f;
+	--color-neutral-800: #575c5d;
+	--color-neutral-900: #4b5050;
+	--color-neutral-950: #2a2d2d;
+
 
 	/* Theme should be hotswappable */
-	--color-primary-50: #eff6ff;
-	--color-primary-100: #dbeafe;
-	--color-primary-200: #bfdbfe;
-	--color-primary-300: #93c5fd;
-	--color-primary-400: #60a5fa;
-	--color-primary-500: #3b82f6;
-	--color-primary-600: #2563eb;
-	--color-primary-700: #1d4ed8;
-	--color-primary-800: #1e40af;
-	--color-primary-900: #1e3a8a;
-	--color-primary-950: #1e3a8a;
+	--color-primary-50: #f2fbfa;
+	--color-primary-100: #d2f5f2;
+	--color-primary-200: #a5eae5;
+	--color-primary-300: #70d8d3;
+	--color-primary-400: #42bfbd;
+	--color-primary-500: #2aa7a7;
+	--color-primary-600: #1e8183;
+	--color-primary-700: #1c6769;
+	--color-primary-800: #1b5254;
+	--color-primary-900: #1b4446;
+	--color-primary-950: #0a2629;
+
+
 
 	--color-warning-50: #fffbeb;
 	--color-warning-100: #fef3c7;
@@ -86,7 +91,8 @@ html, body, #app {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-family: var(--font-sans);
+	word-spacing: 0.3em;
 	font-size: 16px;
 	color: #333;
 }
