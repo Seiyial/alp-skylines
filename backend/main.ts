@@ -1,11 +1,12 @@
 import { elysiaTRPCCreateContext } from '@/lib/core/trpc'
 import { rootRouter } from '@/routers/root'
-import { trpc as elysiaTRPC } from '@elysiajs/trpc'
-
 import { cors } from '@elysiajs/cors'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import { Elysia } from 'elysia'
 import { env } from './src/env'
 import { healthcheckRouter } from './src/routers/healthcheckRouter'
+
+export type BackendTRPCRoot = typeof rootRouter
 
 const app = new Elysia()
 	.get('/ping', () => 'pong')
@@ -21,13 +22,24 @@ const app = new Elysia()
 	}))
 
 	// 🌸 TRPC
-	.use(elysiaTRPC(rootRouter, { createContext: elysiaTRPCCreateContext }))
+	.all('/api/trpc/*', async (ctx) => {
+		return fetchRequestHandler({
+			endpoint: '/api/trpc',
+			router: rootRouter,
+			req: ctx.request,
+			createContext: elysiaTRPCCreateContext,
+			onError (p) {
+				console.error('TRPC Error:', p)
+				return p
+			}
+		})
+	})
 
 	.listen(env.PORT)
 
-console.log(`🦊 alps-app-name (Elysia) is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port}`)
+console.log(`🏙️  ~ Skyline ~ 🌆 (backend) is running at ${app.server?.url.protocol}//${app.server?.hostname}:${app.server?.port}`)
 
 process.on('SIGINT', () => {
-	console.log('🦊 alps-app-name (Elysia) is shutting down...')
+	console.log('🏙️  ~ Skyline ~ 🌆 (backend) is shutting down...')
 	process.exit()
 })

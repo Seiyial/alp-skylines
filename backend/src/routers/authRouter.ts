@@ -1,12 +1,13 @@
+import { pick } from '@/lib/utils/lang-ext'
 import { z } from 'zod'
 import { passwords } from '../lib/auth/passwords'
 import { sessions } from '../lib/auth/sessions'
-import { route, router } from '../lib/core/trpc'
+import { publicRoute, router } from '../lib/core/trpc'
 import { pris } from '../lib/db/prisma'
 
 const kSessionCookieName = sessions.cookieName
 
-const login = route
+const login = publicRoute
 	.input(z.object({
 		email: z.string().email()
 			.min(1),
@@ -29,18 +30,10 @@ const login = route
 			'Set-Cookie',
 			`${kSessionCookieName}=${sessionToken}; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=${60 * 60 * 24 * 30}`
 		)
-		const {
-			email, id, isSuperAdmin, createdAt
-		} = user
-		return {
-			email,
-			id,
-			...isSuperAdmin ? { isSuperAdmin } : {},
-			createdAt
-		}
+		return pick(user, 'id', 'email', 'name', 'isSuperAdmin')
 	})
 
-const logout = route
+const logout = publicRoute
 	.mutation(async ({ ctx }) => {
 		const sessionToken = ctx.cookieValueIfAny
 		if (!sessionToken) {
@@ -57,7 +50,16 @@ const logout = route
 		return true
 	})
 
+const getState = publicRoute
+	.input(z.object({}))
+	.query(async ({ ctx }) => {
+		const cu = ctx.session?.user ?? null
+		if (!cu) return null
+		return pick(cu, 'id', 'email', 'name', 'isSuperAdmin')
+	})
+
 export const sessionRouter = router({
 	login,
-	logout
+	logout,
+	getState
 })
