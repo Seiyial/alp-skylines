@@ -92,15 +92,17 @@ html, body, #app {
 	font-family: var(--font-sans);
 	word-spacing: 0.1em;
 	font-size: 16px;
-	color: #333;
+	color: black;
 }
 
 ::selection {
-	background: var(--color-primary-300);
-	color: var(--color-white);
+	background: #2aa7a730;
 }
 
 @media (prefers-color-scheme: dark) {
+	html, body, #app {
+		color: var(--color-neutral-300);
+	}
 	::selection {
 		background: #2aa7a730;
 		color: currentColor;

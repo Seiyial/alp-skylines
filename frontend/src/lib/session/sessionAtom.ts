@@ -16,13 +16,16 @@ export const useSession = (expectLoggedIn: boolean = true) => {
 			api.sessions.getState.query(emptyObj)
 				.then((resp) => {
 					if (resp) {
+						console.log('has session')
 						writeAtom(sessionAtom, resp)
 					} else {
+						console.log('no session')
 						toast('Not signed in', 'Please sign in to continue.')
 						nav('/')
 					}
 				})
 		}
+		console.log('session changed to', session)
 	}, [session])
 
 	return session

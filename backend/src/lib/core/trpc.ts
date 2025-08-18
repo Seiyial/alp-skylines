@@ -10,7 +10,7 @@ export const elysiaTRPCCreateContext = async (opts: FetchCreateContextFnOptions)
 
 	const reqCookie = opts.req.headers.get('cookie')
 	const parsedCookie = cookie.parse(reqCookie || '')
-	const sessionToken = parsedCookie['__app-name-short_sid']
+	const sessionToken = parsedCookie[sessions.cookieName]
 
 	return {
 		session: sessionToken ? await sessions.validateSessionToken(sessionToken) : null,
@@ -41,7 +41,7 @@ export const route = trpcApp.procedure
 	})
 export const superAdminRoute = trpcApp.procedure
 	.use((state) => {
-		if (state.ctx.session === null || !state.ctx.session.user.isSuperAdmin) {
+		if (!state.ctx.session?.user.isSuperAdmin) {
 			throw new Error('Not authorised.')
 		}
 		return state.next()

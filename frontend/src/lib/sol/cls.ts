@@ -196,6 +196,9 @@ export namespace cls {
 					lg: 'shadow-lg',
 					xl: 'shadow-xl'
 				},
+				shadowColor: {
+					black: 'shadow-black/20 dark:shadow-black/20'
+				},
 				borderRadius: borderRadius.variants,
 				depress: btnDepressVariance.variants,
 				transitionDuration: transitionDurations.variants,
@@ -203,18 +206,37 @@ export namespace cls {
 					yes: 'transition-all',
 					instant: 'transition-colors'
 				},
-				theme: {
-					white: 'bg-white',
+				bg: {
+					none: '',
+					base: 'bg-white dark:bg-neutral-900/50',
 					light: 'bg-neutral-100',
 					primary: 'bg-primary-500 text-white',
 					primary_light: 'bg-primary-100 text-primary-700',
 					primary_outlined_light: 'bg-transparent border-2 box-border border-primary-500 text-primary-500 hover:bg-primary-100 active:bg-primary-200'
+				},
+				padSize: commonPadSizes.variants,
+				border: {
+					none: 'border-none',
+					thin: 'border',
+					medium: 'border-2',
+					mediumThick: 'border-[3px]',
+					thick: 'border-4'
+				},
+				borderColor: {
+					none: 'border-transparent',
+					neutral: 'border-neutral-200 dark:border-neutral-900',
+					primary: 'border-primary-500'
 				}
 			},
 			defaultVariants: {
-				shadow: 'md',
+				shadow: 'sm',
+				shadowColor: 'black',
 				borderRadius: borderRadius.defaultVariant,
-				depress: 'none'
+				depress: 'none',
+				bg: 'base',
+				padSize: 'md',
+				border: 'none',
+				borderColor: 'neutral'
 			},
 			compoundVariants: []
 		}

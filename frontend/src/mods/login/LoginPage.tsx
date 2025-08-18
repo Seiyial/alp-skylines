@@ -34,6 +34,7 @@ export const LoginPage: React.FC = () => {
 			password
 		}).then((res) => {
 			writeAtom(sessionAtom, res)
+			nav('/main/projects')
 		})
 			.catch((e) => {
 				setError('Login failed. Please try again. (' + e.message?.toString() + ')')
