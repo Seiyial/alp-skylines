@@ -6,7 +6,9 @@
 		"db-migrate": "cd backend && prisma migrate dev && cd ..",
 		"db-deploy": "cd backend && prisma migrate deploy && cd ..",
 		"db-deploy-and-start": "prisma migrate deploy && bun run main.ts",
-		"create-user": "bun bin/create-user.ts"
+		"create-user": "bun run bin/create-superadmin.ts",
+		"create-project": "bun run bin/create-project.ts",
+		"create-guest": "bun run bin/create-guest.ts"
 	},
 	"type": "module",
 	"dependencies": {
@@ -20,6 +22,7 @@
 		"@prisma/client": "^6.14.0",
 		"@t3-oss/env-core": "^0.13.8",
 		"@trpc/server": "^11.4.4",
+		"@types/bun": "^1.2.20",
 		"date-fns": "^4.1.0",
 		"elysia": "^1.3.8",
 		"superjson": "^2.2.2",
@@ -27,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@clack/prompts": "^0.11.0",
+		"@types/node": "^24.3.0",
 		"bun-types": "^1.2.20",
 		"prisma": "^6.14.0"
 	}

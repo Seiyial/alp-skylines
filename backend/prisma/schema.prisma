@@ -1,36 +1,93 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+   provider = "prisma-client-js"
+   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
 }
 
-
 model User {
-	id             String      @id @default(cuid())
-	email          String?     @unique
-	passwordHash   String?
-	alpHQAppUserID String?
-	isSuperAdmin   Boolean     @default(false)
-	sessions       Session[]
-	createdAt      DateTime    @default(now())
-	updatedAt      DateTime    @updatedAt
+   id            String          @id @default(cuid())
+   email         String?         @unique
+   passwordHash  String?
+	name          String
+   isSuperAdmin  Boolean         @default(false)
+   sessions      Session[]
+   createdAt     DateTime        @default(now())
+   updatedAt     DateTime        @updatedAt
+   ownedProjects Project[]
+   memberships   ProjectMember[]
 }
 
 model Session {
-	id           String      @id @default(cuid())
-	userID       String
-	user         User        @relation(fields: [userID], references: [id])
-	createdAt    DateTime    @default(now())
-	expiresAt    DateTime
+   id        String   @id @default(cuid())
+   userID    String
+   user      User     @relation(fields: [userID], references: [id])
+   createdAt DateTime @default(now())
+   expiresAt DateTime
 }
 
+model Project {
+   id          String          @id @default(cuid())
+   name        String
+	externalName String
+	codename    String          @unique
+   description String?
+   ownerID     String
+   owner       User            @relation(fields: [ownerID], references: [id])
+   createdAt   DateTime        @default(now())
+   updatedAt   DateTime        @updatedAt
+   episodes    Episode[]
+   tasks       Task[]
+   members     ProjectMember[]
+}
+
+model ProjectMember {
+   userID    String
+   user      User     @relation(fields: [userID], references: [id])
+   projectID String
+   project   Project  @relation(fields: [projectID], references: [id])
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+
+   @@unique([userID, projectID])
+}
+
+model Episode {
+   id          String        @id @default(cuid())
+   title       String
+   description String?
+   projectID   String
+   project     Project       @relation(fields: [projectID], references: [id])
+   createdAt   DateTime      @default(now())
+   updatedAt   DateTime      @updatedAt
+   timestamp   DateTime      @default(now())
+   completedOn DateTime?
+   tasks       Task[]
+}
+
+model Task {
+   id          String        @id @default(cuid())
+   title       String
+   description String?
+   projectID   String
+   project     Project       @relation(fields: [projectID], references: [id])
+   createdAt   DateTime      @default(now())
+   updatedAt   DateTime      @updatedAt
+   status      TaskStatus    @default(TODO)
+	statusComment String?
+   episodeID   String
+   episode     Episode       @relation(fields: [episodeID], references: [id])
+	orderIdx    Int           @default(100)
+}
+
+enum TaskStatus {
+	TODO
+	IN_PROGRESS
+	DONE
+	DROPPED
+	DEFERRED
+	OTHER
+}

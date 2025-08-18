@@ -21,10 +21,10 @@ async function main () {
 		const passwordHash = await passwords.generateHash(password)
 		const user = await pris.user.create({
 			data: {
+				name,
 				email,
 				passwordHash,
-				alpHQAppUserID: null,
-				isSuperAdmin: false
+				isSuperAdmin: true
 			}
 		})
 

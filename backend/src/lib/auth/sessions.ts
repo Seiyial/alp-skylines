@@ -1,7 +1,7 @@
+import type { Session, User } from '@/generated/prisma'
 import { pris } from '@/lib/db/prisma'
 import { sha256 } from '@oslojs/crypto/sha2'
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding'
-import type { Session, User } from '@prisma/client'
 
 export namespace sessions {
 
@@ -18,7 +18,7 @@ export namespace sessions {
 		return token
 	}
 
-	export function generateSessionToken(): string {
+	export function generateSessionToken (): string {
 		// "DO NOT USE Math.random()"
 		// "Math.random() uses a pseudo-random number generator (PRNG) that derives numbers from an internal state. If an attacker knows the generator's internal state, they can predict the next number generated. This could allow them to impersonate a user or access sensitive information"
 		const bytes = new Uint8Array(20)
@@ -27,18 +27,18 @@ export namespace sessions {
 		return token
 	}
 
-	export async function createSession(token: string, userID: string): Promise<Session> {
+	export async function createSession (token: string, userID: string): Promise<Session> {
 		const sessionID = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 		return pris.session.create({
 			data: {
 				id: sessionID,
 				userID,
-				expiresAt: new Date(Date.now() + (1000 * 60 * 60 * 24 * 30)),
+				expiresAt: new Date(Date.now() + (1000 * 60 * 60 * 24 * 30))
 			}
 		})
 	}
 
-	export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
+	export async function validateSessionToken (token: string): Promise<SessionValidationResult> {
 		const sessionID = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 		const session = await pris.session.findUnique({
 			where: { id: sessionID },
@@ -63,7 +63,7 @@ export namespace sessions {
 		return { session: rest, user }
 	}
 
-	export async function invalidateSession(sessionId: string): Promise<void> {
+	export async function invalidateSession (sessionId: string): Promise<void> {
 		await pris.session.delete({ where: { id: sessionId } })
 	}
 
