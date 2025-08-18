@@ -209,6 +209,7 @@ export namespace cls {
 				bg: {
 					none: '',
 					base: 'bg-white dark:bg-neutral-900/50',
+					base_darker: 'bg-neutral-50 dark:bg-black/20',
 					light: 'bg-neutral-100',
 					primary: 'bg-primary-500 text-white',
 					primary_light: 'bg-primary-100 text-primary-700',
@@ -219,12 +220,13 @@ export namespace cls {
 					none: 'border-none',
 					thin: 'border',
 					medium: 'border-2',
-					mediumThick: 'border-[3px]',
+					medium_thick: 'border-[3px]',
 					thick: 'border-4'
 				},
 				borderColor: {
 					none: 'border-transparent',
 					neutral: 'border-neutral-200 dark:border-neutral-900',
+					neutral_light: 'border-neutral-200/50 dark:border-neutral-900/50',
 					primary: 'border-primary-500'
 				}
 			},

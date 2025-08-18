@@ -4,14 +4,14 @@ import { useAtom } from 'jotai'
 import { withImmer } from 'jotai-immer'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { useEffect } from 'react'
-import { loadStates, type LoadState } from './loadStates'
+import { loadStates, type LoadState } from './loadstates'
 
 export namespace loaderPackE {
 	export const forSingularStorePayload = <
 		Q extends (...params: any[]) => Promise<any>
 	>(storeName: string, queryFn: Q) => {
 
-		const immerAtom = withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alppf_alpinevillecollege:${storeName}`, loadStates.init()))
+		const immerAtom = withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alp_skyline:${storeName}`, loadStates.init()))
 
 		const refetch = async (params: Parameters<Q>[0]) => {
 			try {
@@ -45,21 +45,31 @@ export namespace loaderPackE {
 		paramToID: (param: Parameters<Q>[0]) => string
 	) => {
 
-		const immerAtom = atomFamily((param: Parameters<Q>[0]) => withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alppf_alpinevillecollege:${storeName}:${paramToID(param)}`, loadStates.init())))
+		const immerAtom = atomFamily((param: Parameters<Q>[0]) => withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alp_skyline:${storeName}:${paramToID(param)}`, loadStates.init())))
 		const refetch = async (params: Parameters<Q>[0]) => {
 			try {
 				const data = await queryFn(params)
-				return setAtom(immerAtom(params[0]), loadStates.fromData(data))
+				console.log('fetched', data)
+				return loadStates.fromData(data)
 			} catch (error) {
-				return setAtom(immerAtom(params[0]), loadStates.fromError(errLib.logAndExtractError(error)))
+				console.log('err', error)
+				return loadStates.fromError(errLib.logAndExtractError(error))
 			}
 		}
 
 		const useStateWithLoader = (memoisedParams: Parameters<Q>[0] | null) => {
 			const [state, setState] = useAtom(immerAtom(memoisedParams))
+			console.log('state', state)
 			useEffect(() => {
-				if (memoisedParams) refetch(memoisedParams)
-				else if (state.loaded !== null) setState(loadStates.init())
+				if (memoisedParams) {
+					console.log('refetch')
+					refetch(memoisedParams).then((newLS) => {
+						console.log('newLS', newLS)
+						setState(newLS)
+					})
+				} else if (state.loaded !== null) {
+					setState(loadStates.init())
+				}
 			}, [memoisedParams])
 			return { state, setState, refetch }
 		}

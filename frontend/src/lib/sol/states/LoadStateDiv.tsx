@@ -1,4 +1,4 @@
-import type { LoadState } from '@/lib/load-states'
+import type { LoadState } from '@/lib/loadstates'
 import { cn } from '@/utils/react-ext'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
@@ -35,6 +35,8 @@ export const LoadStateDivExtended = <T extends object, P extends {} = {}> ({
 	clsLoadingSpinner,
 	loaderType = 'skeleton'
 }: PLoadStateDivExtended<T, P>) => {
+
+	console.log('isLoading', state.loaded === null || Boolean(alsoIsLoadingIf), state)
 
 	return <AnimatePresence mode='wait'>
 		{ state.loaded === null || Boolean(alsoIsLoadingIf)

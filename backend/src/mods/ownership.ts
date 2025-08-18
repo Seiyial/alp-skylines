@@ -19,4 +19,13 @@ export namespace ownership {
 	export const ensureUserCanWriteEpisode = async (user: Pick<User, 'id' | 'isSuperAdmin'>, episodeID: string) => {
 		invariant(user.isSuperAdmin, 'Episode not found or you don\'t have permission to modify it.')
 	}
+
+	export const ensureUserCanReadEpisode = async (user: Pick<User, 'id' | 'isSuperAdmin'>, episodeID: string) => {
+		invariant(
+			user.isSuperAdmin || Boolean(await pris.episode.findFirst({
+				where: { id: episodeID, project: { members: { some: { userID: user.id } } } }
+			})),
+			'User does not have access to this episode'
+		)
+	}
 }

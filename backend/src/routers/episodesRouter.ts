@@ -13,13 +13,6 @@ const list = route
 			where: { projectID: input.projectID, project: { ownerID: ctx.session.user.id } },
 			orderBy: {
 				timestamp: 'asc'
-			},
-			include: {
-				tasks: {
-					orderBy: {
-						orderIdx: 'asc'
-					}
-				}
 			}
 		})
 		return episodes

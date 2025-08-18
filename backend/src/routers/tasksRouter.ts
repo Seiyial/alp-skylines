@@ -5,6 +5,20 @@ import { ownership } from '@/mods/ownership'
 import { invariant } from '@epic-web/invariant'
 import z from 'zod'
 
+const list = route
+	.input(z.object({
+		episodeID: z.string().min(1)
+	}))
+	.query(async ({ ctx, input }) => {
+		invariant(ctx.session?.user, 'User not found')
+		await ownership.ensureUserCanReadEpisode(ctx.session.user, input.episodeID)
+		const tasks = await pris.task.findMany({
+			where: { episodeID: input.episodeID },
+			orderBy: { orderIdx: 'asc' }
+		})
+		return tasks
+	})
+
 const create = route
 	.input(z.object({
 		episodeID: z.string().min(1),
@@ -111,6 +125,7 @@ const reorderTasks = route
 	})
 
 export const tasksRouter = router({
+	list,
 	create,
 	deleteTask,
 	updateDetails,
