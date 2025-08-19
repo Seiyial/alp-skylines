@@ -15,7 +15,7 @@ export namespace loadStates {
 	export const init = <D>() => ({ loaded: null }) as LoadState<D>
 	export const fromData = <D>(data: D): LoadState<D> => ({ loaded: true, data })
 	export const fromError = (error: string, errorMapped?: Record<string, string>): LoadState<any> => ({ loaded: false, error, errorMapped })
-	export const coerceArray = <D>(state: LoadState<D[]>): D[] => state.loaded ? state.data : []
+	export const coerceArray = <D>(state: LoadState<D[]>): D[] => (state.loaded ? state.data : [])
 	export const fromResult = <D>(result: { ok: true, d: D } | { ok: true, d?: undefined } | { ok: false, err: string, errProps?: Record<string, any> }): LoadState<D> => (
 		result.ok ? fromData(result.d) : fromError(result.err, result.errProps)
 	)

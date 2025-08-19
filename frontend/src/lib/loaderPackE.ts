@@ -3,7 +3,7 @@ import { setAtom } from '@/utils/jotai-ext'
 import { useAtom } from 'jotai'
 import { withImmer } from 'jotai-immer'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { loadStates, type LoadState } from './loadstates'
 
 export namespace loaderPackE {
@@ -45,7 +45,7 @@ export namespace loaderPackE {
 		paramToID: (param: Parameters<Q>[0]) => string
 	) => {
 
-		const immerAtom = atomFamily((param: Parameters<Q>[0]) => withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alp_skyline:${storeName}:${paramToID(param)}`, loadStates.init())))
+		const immerAtom = atomFamily((param: string) => withImmer(atomWithStorage<LoadState<Awaited<ReturnType<Q>>>>(`alp_skyline:${storeName}:${param}`, loadStates.init())))
 		const refetch = async (params: Parameters<Q>[0]) => {
 			try {
 				const data = await queryFn(params)
@@ -58,13 +58,11 @@ export namespace loaderPackE {
 		}
 
 		const useStateWithLoader = (memoisedParams: Parameters<Q>[0] | null) => {
-			const [state, setState] = useAtom(immerAtom(memoisedParams))
-			console.log('state', state)
+			const id = useMemo(() => paramToID(memoisedParams), [memoisedParams])
+			const [state, setState] = useAtom(immerAtom(id))
 			useEffect(() => {
 				if (memoisedParams) {
-					console.log('refetch')
 					refetch(memoisedParams).then((newLS) => {
-						console.log('newLS', newLS)
 						setState(newLS)
 					})
 				} else if (state.loaded !== null) {

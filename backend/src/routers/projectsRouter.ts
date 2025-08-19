@@ -17,6 +17,24 @@ const list = route
 		})
 	})
 
+const get = route
+	.input(z.object({
+		id: z.string().min(1)
+	}))
+	.query(async ({ ctx, input }) => {
+		invariant(ctx.session?.user.id, 'User not authenticated')
+		return pris.project.findUnique({
+			where: {
+				id: input.id,
+				OR: [
+					{ members: { some: { userID: ctx.session.user.id } } },
+					{ ownerID: ctx.session.user.id }
+				]
+			}
+		})
+	})
+
 export const projectsRouter = router({
-	list
+	list,
+	get
 })

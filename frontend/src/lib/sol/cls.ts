@@ -155,6 +155,11 @@ export namespace cls {
 		'py-1.5 px-4 rounded-md outline-none transition-colors duration-100',
 		{
 			variants: {
+				bg: {
+					none: '',
+					dark: 'dark:bg-black/20',
+					darkFocusing: 'bg-transparent dark:hover:bg-black/10 dark:focus:bg-black/20 dark:hover:focus:bg-black/20'
+				},
 				borderThickness: {
 					thin: 'border',
 					medium: 'border-2',
@@ -162,17 +167,19 @@ export namespace cls {
 					thick: 'border-4'
 				},
 				borderColour: {
+					none: 'border-transparent',
 					neutral: 'border-neutral-200 dark:border-neutral-900 focus:border-neutral-500 hover:focus:border-neutral-500 focus:dark:border-neutral-600 hover:dark:border-neutral-700 hover:focus:dark:border-neutral-600',
 					neutralToPri: 'border-neutral-200 focus:border-primary-600 dark:border-neutral-800 focus:dark:border-primary-600 hover:dark:border-neutral-700 hover:focus:dark:border-primary-600 hover:border-neutral-400'
 				},
 				textColour: {
-					neutral: 'text-neutral-700 dark:text-neutral-300 placeholder:text-neutral-700/50 dark:placeholder:text-neutral-300/30'
+					neutral: 'text-neutral-900/95 dark:text-neutral-300 placeholder:text-neutral-900/50 dark:placeholder:text-neutral-300/30'
 				}
 			},
 			defaultVariants: {
 				borderThickness: 'thin',
 				borderColour: 'neutral',
-				textColour: 'neutral'
+				textColour: 'neutral',
+				bg: 'none'
 			}
 		}
 	)

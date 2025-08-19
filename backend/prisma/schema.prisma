@@ -12,7 +12,7 @@ model User {
    id            String          @id @default(cuid())
    email         String?         @unique
    passwordHash  String?
-	name          String
+   name          String
    isSuperAdmin  Boolean         @default(false)
    sessions      Session[]
    createdAt     DateTime        @default(now())
@@ -30,18 +30,18 @@ model Session {
 }
 
 model Project {
-   id          String          @id @default(cuid())
-   name        String
-	externalName String
-	codename    String          @unique
-   description String?
-   ownerID     String
-   owner       User            @relation(fields: [ownerID], references: [id])
-   createdAt   DateTime        @default(now())
-   updatedAt   DateTime        @updatedAt
-   episodes    Episode[]
-   tasks       Task[]
-   members     ProjectMember[]
+   id           String          @id @default(cuid())
+   name         String
+   externalName String
+   codename     String          @unique
+   description  String?
+   ownerID      String
+   owner        User            @relation(fields: [ownerID], references: [id])
+   createdAt    DateTime        @default(now())
+   updatedAt    DateTime        @updatedAt
+   episodes     Episode[]
+   tasks        Task[]
+   members      ProjectMember[]
 }
 
 model ProjectMember {
@@ -56,38 +56,39 @@ model ProjectMember {
 }
 
 model Episode {
-   id          String        @id @default(cuid())
+   id          String    @id @default(cuid())
    title       String
-   description String?
+   writeup     Json?
    projectID   String
-   project     Project       @relation(fields: [projectID], references: [id])
-   createdAt   DateTime      @default(now())
-   updatedAt   DateTime      @updatedAt
-   timestamp   DateTime      @default(now())
+   project     Project   @relation(fields: [projectID], references: [id])
+   createdAt   DateTime  @default(now())
+   updatedAt   DateTime  @updatedAt
+   timestamp   DateTime  @default(now())
+   yyyymmdd    String    @default("2025-01-01")
    completedOn DateTime?
    tasks       Task[]
 }
 
 model Task {
-   id          String        @id @default(cuid())
-   title       String
-   description String?
-   projectID   String
-   project     Project       @relation(fields: [projectID], references: [id])
-   createdAt   DateTime      @default(now())
-   updatedAt   DateTime      @updatedAt
-   status      TaskStatus    @default(TODO)
-	statusComment String?
-   episodeID   String
-   episode     Episode       @relation(fields: [episodeID], references: [id])
-	orderIdx    Int           @default(100)
+   id            String     @id @default(cuid())
+   title         String
+   description   String?
+   projectID     String
+   project       Project    @relation(fields: [projectID], references: [id])
+   createdAt     DateTime   @default(now())
+   updatedAt     DateTime   @updatedAt
+   status        TaskStatus @default(TODO)
+   statusComment String?
+   episodeID     String
+   episode       Episode    @relation(fields: [episodeID], references: [id])
+   orderIdx      Int        @default(100)
 }
 
 enum TaskStatus {
-	TODO
-	IN_PROGRESS
-	DONE
-	DROPPED
-	DEFERRED
-	OTHER
+   TODO
+   IN_PROGRESS
+   DONE
+   DROPPED
+   DEFERRED
+   OTHER
 }

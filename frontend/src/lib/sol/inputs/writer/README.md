@@ -1,0 +1,1 @@
+bun install slate slate-history slate-react use-debounce is-hotkey && bun add -D @types/is-hotkey

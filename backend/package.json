@@ -2,11 +2,11 @@
 	"name": "skyline-backend",
 	"scripts": {
 		"dev": "bun run --hot --watch main.ts",
-		"db": "cd backend && prisma generate && cd ..",
-		"db-migrate": "cd backend && prisma migrate dev && cd ..",
-		"db-deploy": "cd backend && prisma migrate deploy && cd ..",
+		"db": "prisma generate",
+		"db-migrate": "prisma migrate dev",
+		"db-deploy": "prisma migrate deploy",
 		"db-deploy-and-start": "prisma migrate deploy && bun run main.ts",
-		"create-user": "bun run bin/create-superadmin.ts",
+		"create-superadmin": "bun run bin/create-superadmin.ts",
 		"create-project": "bun run bin/create-project.ts",
 		"create-guest": "bun run bin/create-guest.ts"
 	},

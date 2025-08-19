@@ -197,7 +197,7 @@ export default typescriptEslint.config(
 			'st/no-whitespace-before-property': 'warn',
 			'st/nonblock-statement-body-position': ['warn', 'any'],
 			'st/object-curly-newline': ['warn', {
-				ImportDeclaration: 'never',
+				ImportDeclaration: { multiline: true, consistent: true, minProperties: 5 },
 				ObjectExpression: { multiline: true, consistent: true, minProperties: 4 },
 				ObjectPattern: { multiline: true, consistent: true, minProperties: 4 },
 				ExportDeclaration: { multiline: true, consistent: true, minProperties: 4 }

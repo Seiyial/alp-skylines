@@ -3,7 +3,7 @@ import { cls } from '../cls'
 import { LoadingSpinner } from '../states/LoadingSpinner'
 
 export const SolTextInputRaw: RCFwdDOMElement<HTMLInputElement, Parameters<typeof cls.textInputVariants2D>[0] & { isLoading?: boolean, onEnter?(): void }> = ({
-	// size, rounded, theme, depress, shadow,
+	borderColour, borderThickness, bg, textColour,
 	className, isLoading, onEnter, onKeyDown, ...props
 }) => {
 
@@ -11,7 +11,7 @@ export const SolTextInputRaw: RCFwdDOMElement<HTMLInputElement, Parameters<typeo
 		{...props}
 		className={cn(
 			cls.textInputVariants2D({
-				// size, rounded, theme, depress, shadow
+				borderColour, borderThickness, bg, textColour
 			}),
 			className
 		)}

@@ -74,6 +74,8 @@
 	--color-black: #000;
 	--color-white: #fff;
 
+	--text-2xs: 0.625rem;
+
 	@keyframes translate-x-fullrange {
 		0% {
 			transform: translateX(-100%);
