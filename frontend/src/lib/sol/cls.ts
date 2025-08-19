@@ -99,29 +99,35 @@ export namespace cls {
 				theme: {
 					primary_filled: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-primary-500/10',
 					primary_light: 'bg-primary-100 text-primary-700 hover:bg-primary-200 active:bg-primary-300',
+					primary_transparent_to_light: 'border-transparent bg-transparent text-primary-500 hover:bg-primary-100 active:bg-primary-200',
 					primary_outlined_light: 'bg-transparent border box-border border-primary-500 text-primary-500 hover:bg-primary-100 active:bg-primary-200',
 					primary_outlined_lightborder: 'bg-transparent border box-border border-primary-200 text-primary-200 hover:bg-primary-100 active:bg-primary-200',
 					primary_outlined_fillable: 'bg-transparent border box-border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white',
 
 					neutral_filled: 'bg-neutral-500 text-white hover:bg-neutral-600 active:bg-neutral-700 shadow-primary-500/30',
 					neutral_light: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300',
+					neutral_transparent_to_light: 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-100 active:bg-neutral-200',
 					neutral_outlined_light: 'bg-transparent border box-border border-neutral-500 text-neutral-500 hover:bg-neutral-100 active:bg-neutral-200',
 					neutral_outlined_lightborder: 'bg-transparent border box-border border-neutral-200 text-neutral-200 hover:bg-neutral-100 active:bg-neutral-200',
 					neutral_outlined_fillable: 'bg-transparent border box-border border-neutral-500 text-neutral-500 hover:bg-neutral-500 hover:text-white',
 
 					success_filled: 'bg-success-500 text-white hover:bg-success-600 active:bg-success-700 shadow-primary-500/30',
 					success_light: 'bg-success-100 text-success-700 hover:bg-success-200 active:bg-success-300',
+					success_transparent_to_light: 'bg-transparent text-success-500 hover:bg-success-100 active:bg-success-200',
 					success_outlined_light: 'bg-transparent border box-border border-success-500 text-success-500 hover:bg-success-100 active:bg-success-200',
 					success_outlined_lightborder: 'bg-transparent border box-border border-success-200 text-success-200 hover:bg-success-100 active:bg-success-200',
 					success_outlined_fillable: 'bg-transparent border box-border border-success-500 text-success-500 hover:bg-success-500 hover:text-white',
 
 					danger_filled: 'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700 shadow-primary-500/30',
 					danger_light: 'bg-danger-100 text-danger-700 hover:bg-danger-200 active:bg-danger-300',
+					danger_transparent_to_light: 'border-transparent bg-transparent text-danger-500 hover:bg-danger-100 active:bg-danger-200',
 					danger_outlined_light: 'bg-transparent border box-border border-danger-500 text-danger-500 hover:bg-danger-100 active:bg-danger-200',
 					danger_outlined_lightborder: 'bg-transparent border box-border border-danger-200 text-danger-200 hover:bg-danger-100 active:bg-danger-200',
 					danger_outlined_fillable: 'bg-transparent border box-border border-danger-500 text-danger-500 hover:bg-danger-500 hover:text-white',
+
 					warning_filled: 'bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 shadow-primary-500/30',
 					warning_light: 'bg-warning-100 text-warning-700 hover:bg-warning-200 active:bg-warning-300',
+					warning_transparent_to_light: 'border-transparent bg-transparent text-warning-500 hover:bg-warning-100 active:bg-warning-200',
 					warning_outlined_light: 'bg-transparent border box-border border-warning-500 text-warning-500 hover:bg-warning-100 active:bg-warning-200',
 					warning_outlined_lightborder: 'bg-transparent border box-border border-warning-200 text-warning-200 hover:bg-warning-100 active:bg-warning-200',
 					warning_outlined_fillable: 'bg-transparent border box-border border-warning-500 text-warning-500 hover:bg-warning-500 hover:text-white'
@@ -158,7 +164,7 @@ export namespace cls {
 				bg: {
 					none: '',
 					dark: 'dark:bg-black/20',
-					darkFocusing: 'bg-transparent dark:hover:bg-black/10 dark:focus:bg-black/20 dark:hover:focus:bg-black/20'
+					darkFocusing: 'bg-transparent hover:bg-neutral-100 focus:bg-neutral-200/80 hover:focus:bg-neutral-200/80 dark:hover:bg-black/10 dark:focus:bg-black/20 dark:hover:focus:bg-black/20'
 				},
 				borderThickness: {
 					thin: 'border',

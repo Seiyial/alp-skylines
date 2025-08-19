@@ -31,7 +31,9 @@ const ProjectList: RCLoadedDiv<RouterOutputs['projects']['list']> = ({ data }) =
 		data.map((project) => (
 			<SolCard
 				transitionDuration='d100ms'
-				className='w-full h-[60px] flex flex-row items-center self-stretch hover:bg-neutral-100 hover:dark:bg-neutral-900 active:bg-neutral-100/50 active:dark:bg-neutral-900/50 active:translate-y-px active:!shadow-none cursor-pointer select-none mb-3'
+				border='thin'
+				borderColor='neutral_light'
+				className='w-full h-[60px] flex flex-row items-center self-stretch !bg-neutral-50 hover:!bg-neutral-100 hover:dark:bg-neutral-900 active:bg-neutral-300/50 active:dark:bg-neutral-900/50 active:translate-y-px active:!shadow-none cursor-pointer select-none mb-3 !shadow-none dark:!shadow-sm'
 				key={project.id}
 				onClick={() => nav(`/main/projects/${project.id}`)}
 			>

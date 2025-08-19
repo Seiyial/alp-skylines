@@ -6,7 +6,7 @@ import { SolTextLink } from '@/lib/sol/inputs/SolTextLink'
 import { ErrorDiv } from '@/lib/sol/states/errors/ErrorDiv'
 import useError from '@/lib/sol/states/errors/useError'
 import { writeAtom } from '@/utils/jotai-ext'
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -18,9 +18,17 @@ export const LoginPage: React.FC = () => {
 	const [error, setError] = useError(null)
 
 	const nav = useNavigate()
-	const currentUser = useAtomValue(sessionAtom)
+	const [currentUser, setCurrentUser] = useAtom(sessionAtom)
 	useEffect(() => {
 		if (currentUser) nav('/main')
+		else if (currentUser === null) {
+			api.sessions.getState.query({}).then((res) => {
+				if (res) {
+					setCurrentUser(res)
+					nav('/main/projects')
+				}
+			})
+		}
 	}, [])
 
 	const perfLogin = async () => {

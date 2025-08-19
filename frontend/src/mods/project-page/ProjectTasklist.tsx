@@ -6,7 +6,7 @@ import { LoadStateDivExtended, type RCLoadedDivExtended } from '@/lib/sol/states
 import { errLib } from '@/utils/errLib'
 import { setAtom } from '@/utils/jotai-ext'
 import { ListTodoIcon, SquareIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 const tasksLoader = loaderPackE.forFamilyPayload(
 	'tasks',
@@ -16,7 +16,8 @@ const tasksLoader = loaderPackE.forFamilyPayload(
 
 export const EpisodeTasklist: React.FC<{ episodeID: string }> = ({ episodeID }) => {
 
-	const tasks = tasksLoader.useStateWithLoader({ episodeID })
+	const memoProps = useMemo(() => (episodeID ? ({ episodeID }) : null), [episodeID])
+	const tasks = tasksLoader.useStateWithLoader(memoProps)
 
 	return <LoadStateDivExtended
 		state={tasks.state}

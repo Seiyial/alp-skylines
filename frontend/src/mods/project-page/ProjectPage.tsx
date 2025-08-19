@@ -75,13 +75,16 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 		<motion.div
 			ref={ref}
 			className={cn(
-				'flex gap-[200px] h-full items-stretch overflow-x-auto snap-x snap-mandatory px-6 py-2 scroll-px-6 select-none cursor-grab active:cursor-grabbing',
-				'[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'
+				// outside of original div is not draggable, fix it
+				// also make the last one scroll into view
+				'flex gap-[100px] h-full items-stretch px-6 py-2 scroll-px-6 select-none',
+				'cursor-grab active:cursor-grabbing',
+				'[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overflow-x-visible'
 			)}
 			drag='x'
-			dragConstraints={{ left: 0, right: 0 }}
-			dragElastic={0.5}
-			style={{ x }} // FM animates x with inertia on release
+			// dragConstraints={{ left: 0, right: 0 }}
+			// dragElastic={0.5}
+			// style={{ x }} // FM animates x with inertia on release
 		>
 			<LoadStateDiv
 				state={episodes.state}
@@ -122,8 +125,8 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 		return <SolCard
 			key={episode.id}
 			className={cn(
-				'self-center relative h-full aspect-[3/4] flex flex-col justify-center items-center cursor-pointer group !p-0',
-				selected && episode.id === selected.id ? 'ring-2 ring-primary-800' : ''
+				'!border-2 dark:!border-0 self-center relative h-full aspect-[3/4] flex flex-col justify-center items-center cursor-pointer group !p-0',
+				selected && episode.id === selected.id ? 'ring-2 ring-primary-400 dark:ring-primary-800' : ''
 			)}
 			transitionDuration='d100ms'
 			shadow='sm'
@@ -131,22 +134,22 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 			borderColor='neutral'
 			onClick={() => setAtom(selectedEpisodeAtom, episode)}
 		>
-			<div className='text-2xs uppercase leading-wide dark:text-neutral-600 text-neutral-300'>
+			<div className='text-2xs uppercase leading-wide dark:text-neutral-600 text-neutral-500'>
 				{timestamps.toFmt(episode.yyyymmdd)}
 			</div>
 			<div className='grow' />
-			{ episode.completedOn ? <ListCheckIcon className='size-6' /> : <ListTodoIcon className='size-6' /> }
+			{ episode.completedOn ? <ListCheckIcon className='size-6 text-neutral-600 dark:text-neutral-300' /> : <ListTodoIcon className='size-6 text-neutral-600 dark:text-neutral-300' /> }
 			<div className='h-2 shrink-0' />
-			<div className='line-clamp-2 text-xs text-center px-1 font-medium text-neutral-500'>{ episode.title }</div>
+			<div className='line-clamp-3 text-xs text-center px-1 font-medium dark:text-neutral-500 text-neutral-900'>{ episode.title }</div>
 			<div className='grow' />
 
 			{ episode.completedOn ? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-black grid place-items-center text-white/80'>
 				<CheckIcon className='size-3 stroke-[4] translate-y-px' />
-			</div> : <div className='size-4'></div> }
+			</div> : ((Date.now() - (episode.createdAt?.getTime() ?? 0)) < (1000 * 60 * 60 * 24)) ? <div className='h-4 text-2xs text-neutral-500'>in progress...</div> : null }
 
 			<div
 				className={cn(
-					'absolute top-1/2 z-10 left-full h-0.5 w-[200px] bg-neutral-500/20 shadow-sm shadow-black/20'
+					'absolute top-1/2 z-10 left-full h-0.5 w-[100px] bg-neutral-500/40 dark:bg-neutral-500/20 dark:shadow-sm shadow-black/20'
 				)}
 			/>
 		</SolCard>
@@ -222,7 +225,7 @@ export const CurrentEpisode: React.FC = () => {
 		<div className='h-6 shrink-0' />
 
 		<Writer
-			initialValue={ep.writeup as Descendant[]}
+			initialValue={ep.writeup as Descendant[] || []}
 			onDebouncedValueChange={(newValue) => {
 				perfSave({ writeup: newValue })
 			}}
