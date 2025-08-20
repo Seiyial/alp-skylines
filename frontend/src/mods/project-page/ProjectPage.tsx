@@ -8,16 +8,21 @@ import { errLib } from '@/utils/errLib'
 import { setAtom, writeAtom } from '@/utils/jotai-ext'
 import { cn } from '@/utils/react-ext'
 import { format } from 'date-fns/format'
-import { motion, useAnimationFrame, useMotionValue } from 'framer-motion'
+import {
+	motion
+} from 'framer-motion'
 import { useAtom, useAtomValue } from 'jotai'
 import { CheckIcon, ListCheckIcon, ListTodoIcon, PlusIcon } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+	useEffect, useMemo, useState
+} from 'react'
 import { useParams } from 'react-router'
 import type { Descendant } from 'slate'
 import { ProjectHeader } from '../project-header/ProjectHeader'
 import { timestamps } from '../utils/timestamps'
 import { projectEpisodesLoader, selectedEpisodeAtom } from './projectEpisodesLoader'
 import { EpisodeTasklist } from './ProjectTasklist'
+import { useDragScroll } from './useHorizDragScroll'
 
 export const ProjectPage: React.FC = () => {
 
@@ -41,18 +46,29 @@ export const ProjectPage: React.FC = () => {
 
 export const ProjectEpisodeTimeline: React.FC = () => {
 
-	const x = useMotionValue(0)
-	const ref = useRef<HTMLDivElement>(null)
 	const { projectID } = useParams()
 	const props = useMemo(() => (projectID ? ({ projectID: projectID ?? '-' }) : null), [projectID])
 	const episodes = projectEpisodesLoader.useStateWithLoader(props)
 
-	useAnimationFrame(() => {
-		const el = ref.current
+	const selectedEpisode = useAtomValue(selectedEpisodeAtom)
+
+	const dragScroller = useDragScroll<HTMLDivElement>()
+
+	useEffect(() => {
+		const el = dragScroller.draggableRef.current
 		if (!el) return
-		// invert because dragging right should move scrollLeft left
-		el.scrollLeft = -x.get()
-	})
+		if (selectedEpisode) {
+			const rect = document.getElementById(horizontalListItemID(selectedEpisode.id))
+			if (rect) {
+				const currentOffsetX = dragScroller.getCurrentOffsetX()
+				console.log('currentOffsetX', currentOffsetX)
+				const elX = rect.getBoundingClientRect().x - currentOffsetX
+				console.log('elX', elX)
+				const desired = -(elX - (window.innerWidth / 2) + (3.5 * 16))
+				dragScroller.animateToOffsetX(desired)
+			}
+		}
+	}, [selectedEpisode])
 
 	const perfCreateNewEpisode = async () => {
 		return api.episodes.create.mutate({
@@ -67,24 +83,23 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 		})
 	}
 
+	console.log('right', -(120 + 100) * (episodes.state.loaded ? episodes.state.data.length : 0))
+
 	return <SolCard
 		bg='base_darker'
-		className='h-[160px] w-full overflow-hidden relative'
+		className='h-[160px] w-full overflow-x-hidden scrollbar-hide relative'
 	>
 		{ /* draggable */ }
 		<motion.div
-			ref={ref}
+			id='scrollable'
+			ref={dragScroller.draggableRef}
 			className={cn(
+				'bg-neutral-900/50',
 				// outside of original div is not draggable, fix it
 				// also make the last one scroll into view
-				'flex gap-[100px] h-full items-stretch px-6 py-2 scroll-px-6 select-none',
-				'cursor-grab active:cursor-grabbing',
-				'[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overflow-x-visible'
+				'flex gap-[100px] h-full min-w-fit items-stretch px-[calc(50vw-1.5rem-60px)] py-2 select-none',
+				'cursor-grab active:cursor-grabbing'
 			)}
-			drag='x'
-			// dragConstraints={{ left: 0, right: 0 }}
-			// dragElastic={0.5}
-			// style={{ x }} // FM animates x with inertia on release
 		>
 			<LoadStateDiv
 				state={episodes.state}
@@ -116,7 +131,8 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 	</SolCard>
 }
 
-const todayYear = new Date().getFullYear()
+const horizontalListItemID = (id: string) => `episode-${id}-card`
+
 const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({ data }) => {
 
 	const selected = useAtomValue(selectedEpisodeAtom)
@@ -124,6 +140,7 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 	return data.map((episode) => {
 		return <SolCard
 			key={episode.id}
+			id={horizontalListItemID(episode.id)}
 			className={cn(
 				'!border-2 dark:!border-0 self-center relative h-full aspect-[3/4] flex flex-col justify-center items-center cursor-pointer group !p-0',
 				selected && episode.id === selected.id ? 'ring-2 ring-primary-400 dark:ring-primary-800' : ''
@@ -137,17 +154,30 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 			<div className='text-2xs uppercase leading-wide dark:text-neutral-600 text-neutral-500'>
 				{timestamps.toFmt(episode.yyyymmdd)}
 			</div>
+
 			<div className='grow' />
-			{ episode.completedOn ? <ListCheckIcon className='size-6 text-neutral-600 dark:text-neutral-300' /> : <ListTodoIcon className='size-6 text-neutral-600 dark:text-neutral-300' /> }
+
+			{ episode.completedOn
+				? <ListCheckIcon className='size-6 text-neutral-600 dark:text-neutral-300' />
+				: <ListTodoIcon className='size-6 text-neutral-600 dark:text-neutral-300' />
+			}
+
 			<div className='h-2 shrink-0' />
 			<div className='line-clamp-3 text-xs text-center px-1 font-medium dark:text-neutral-500 text-neutral-900'>{ episode.title }</div>
+
 			<div className='grow' />
 
-			{ episode.completedOn ? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-black grid place-items-center text-white/80'>
-				<CheckIcon className='size-3 stroke-[4] translate-y-px' />
-			</div> : ((Date.now() - (episode.createdAt?.getTime() ?? 0)) < (1000 * 60 * 60 * 24)) ? <div className='h-4 text-2xs text-neutral-500'>in progress...</div> : null }
+			{ episode.completedOn
+				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-black grid place-items-center text-white/80'>
+					<CheckIcon className='size-3 stroke-[4] translate-y-px' />
+				</div>
+				: ((Date.now() - (episode.createdAt?.getTime() ?? 0)) < (1000 * 60 * 60 * 24))
+					? <div className='h-4 text-2xs text-neutral-500'>in progress...</div>
+					: null
+			}
 
 			<div
+				data-label='line-after'
 				className={cn(
 					'absolute top-1/2 z-10 left-full h-0.5 w-[100px] bg-neutral-500/40 dark:bg-neutral-500/20 dark:shadow-sm shadow-black/20'
 				)}
