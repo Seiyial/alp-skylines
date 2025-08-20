@@ -37,3 +37,7 @@ export const useCanUserWrite = () => {
 	if (loc.pathname.endsWith('/report')) return false
 	return Boolean(session?.isSuperAdmin)
 }
+export const useIsDevteam = () => {
+	const session = useAtomValue(sessionAtom)
+	return Boolean(session?.isSuperAdmin)
+}

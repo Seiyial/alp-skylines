@@ -9,10 +9,10 @@ import z from 'zod'
 const list = route
 	.input(z.object({ projectID: z.string().min(1) }))
 	.query(async ({ ctx, input }) => {
-		invariant(ctx.session?.user?.isSuperAdmin, 'User not found or isn\'t admin')
+		invariant(ctx.session?.user, 'User not found')
 		await ownership.ensureUserCanReadProject(ctx.session.user, input.projectID)
 		const episodes = await pris.episode.findMany({
-			where: { projectID: input.projectID, project: { ownerID: ctx.session.user.id } },
+			where: { projectID: input.projectID },
 			orderBy: {
 				timestamp: 'asc'
 			}

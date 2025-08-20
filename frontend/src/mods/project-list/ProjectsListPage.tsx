@@ -1,4 +1,5 @@
 import type { RouterOutputs } from '@/lib/api'
+import { useIsDevteam } from '@/lib/session/sessionAtom'
 import { SolCard } from '@/lib/sol/containers/SolCard'
 import { SolTextLink } from '@/lib/sol/inputs/SolTextLink'
 import { LoadStateDiv, type RCLoadedDiv } from '@/lib/sol/states/LoadStateDiv'
@@ -30,7 +31,10 @@ export const ProjectsListPage: React.FC = () => {
 	</div>
 }
 const ProjectList: RCLoadedDiv<RouterOutputs['projects']['list']> = ({ data }) => {
+
+	const isALPTeam = useIsDevteam()
 	const nav = useNavigate()
+
 	return (
 		data.map((project) => (
 			<SolCard
@@ -38,21 +42,30 @@ const ProjectList: RCLoadedDiv<RouterOutputs['projects']['list']> = ({ data }) =
 				border='thin'
 				borderColor='neutral_light'
 				bg='none'
-				className='w-full h-[60px] flex flex-row items-center self-stretch bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 hover:dark:bg-neutral-900 active:bg-neutral-300/50 active:dark:bg-neutral-900/50 active:translate-y-px active:!shadow-none cursor-pointer select-none mb-3 !shadow-none dark:!shadow-sm'
+				style={{ height: isALPTeam ? '60px' : '70px', paddingTop: !isALPTeam ? '3px' : '0' }}
+				className='w-full flex flex-row items-center self-stretch bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 hover:dark:bg-neutral-900 active:bg-neutral-300/50 active:dark:bg-neutral-900/50 active:translate-y-px active:!shadow-none cursor-pointer select-none mb-3 !shadow-none dark:!shadow-sm'
 				key={project.id}
 				onClick={() => nav(`/main/projects/${project.id}`)}
 			>
-				<div className='line-clamp-1 text-sm'>
+
+				{ isALPTeam ? <div className='line-clamp-1 text-sm'>
 					<span className='text-lg uppercase font-semibold tracking-widest'>
 						{project.codename}
 					</span>
-					&nbsp;&nbsp;
+						&nbsp;&nbsp;
 					<span className='-translate-y-0.5 relative inline-block opacity-50'>•</span>
 					&nbsp;&nbsp;
 					<span className='text-lg text-neutral-500'>
 						{project.externalName}
 					</span>
-				</div>
+				</div> : <div>
+					<p className='text-lg'>
+						{ project.externalName }
+					</p>
+					<p className='text-xs text-neutral-500/50 uppercase tracking-widest'>
+						{project.codename}
+					</p>
+				</div>}
 			</SolCard>
 		))
 	)

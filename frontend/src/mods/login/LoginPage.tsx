@@ -2,7 +2,6 @@ import { api } from '@/lib/api'
 import { sessionAtom } from '@/lib/session/sessionAtom'
 import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { SolTextInputRaw } from '@/lib/sol/inputs/SolTextInputRaw'
-import { SolTextLink } from '@/lib/sol/inputs/SolTextLink'
 import { ErrorDiv } from '@/lib/sol/states/errors/ErrorDiv'
 import useError from '@/lib/sol/states/errors/useError'
 import { writeAtom } from '@/utils/jotai-ext'
@@ -50,7 +49,9 @@ export const LoginPage: React.FC = () => {
 	}
 
 	return <div className='h-screen w-screen max-h-screen max-w-screen min-w-screen min-h-0 flex flex-col items-center justify-center'>
-		<h1 className='text-4xl dark:text-neutral-100 font-bold mb-8'>Login</h1>
+		<h1 className='text-4xl dark:text-neutral-100 font-bold mb-5'>Skylines</h1>
+		<p className='text-sm mb-4'>Welcome! please sign in.</p>
+		<p className='fixed text-primary-500/50 text-center left-0 right-0 bottom-3'>Alpine Valley Software Co</p>
 		<form action='#' className='flex w-[90vw] max-w-[300px] flex-col gap-2 items-center'>
 
 			<SolTextInputRaw
@@ -83,19 +84,9 @@ export const LoginPage: React.FC = () => {
 
 			<div />
 
-			<SolTextLink
-				underline='onhover'
-				className='text-xs'
-			>
-				Forgot password?
-			</SolTextLink>
-
-			<SolTextLink
-				underline='onhover'
-				className='text-xs'
-			>
-				Request access
-			</SolTextLink>
+			{/* <div className='text-xs text-neutral-500/80'>
+				To recover your password, please feel free to contact me.
+			</div> */}
 		</form>
 	</div>
 }
