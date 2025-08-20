@@ -27,7 +27,10 @@ const create = route
 		orderIdx: z.number().min(0)
 			.optional(),
 		statusComment: z.string().optional(),
-		status: z.enum(TaskStatus)
+		status: z.enum(TaskStatus),
+		indent: z.number().int()
+			.min(0)
+			.max(3)
 	}))
 	.mutation(async ({ ctx, input }) => {
 		invariant(ctx.session?.user, 'User not found')
@@ -54,7 +57,8 @@ const create = route
 				projectID: ep.projectID,
 				episodeID: input.episodeID,
 				status: input.status,
-				statusComment: input.statusComment
+				statusComment: input.statusComment,
+				indent: input.indent
 			}
 		})
 
@@ -83,8 +87,12 @@ const updateDetails = route
 		title: z.string().min(1)
 			.optional(),
 		description: z.string().optional(),
-		status: z.enum(TaskStatus),
+		status: z.enum(TaskStatus).optional(),
 		statusComment: z.string().nullable()
+			.optional(),
+		indent: z.number().int()
+			.min(0)
+			.max(3)
 			.optional()
 	}))
 	.mutation(async ({ ctx, input }) => {
@@ -100,7 +108,8 @@ const updateDetails = route
 				title: input.title,
 				description: input.description,
 				status: input.status,
-				statusComment: input.statusComment
+				statusComment: input.statusComment,
+				indent: input.indent
 			}
 		})
 	})

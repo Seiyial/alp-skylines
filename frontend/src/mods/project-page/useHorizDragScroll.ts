@@ -76,6 +76,14 @@ export function useDragScroll<T extends HTMLElement> () {
 		const onUp = (e: PointerEvent) => {
 			isDragging.current = false
 			isPointerDown.current = false
+			const tlX = extractTranslateX(el.style.transform)
+			// too far LEFT is >0. Because when we scroll to the right we are actually shifting the entire element to the left (negative translateX).
+			// So negative translateX is normal, whereas positive translateX is the thing going right (our vision seeing left) beyond the start point.
+			if (tlX > 0) animateToOffsetX(0)
+
+			const maxTlX = el.getBoundingClientRect().width - window.innerWidth
+			if (tlX < -maxTlX) animateToOffsetX(-maxTlX)
+
 			try { el.releasePointerCapture(e.pointerId) } catch {}
 		}
 

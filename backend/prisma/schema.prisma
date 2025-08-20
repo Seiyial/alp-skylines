@@ -66,7 +66,14 @@ model Episode {
    timestamp   DateTime  @default(now())
    yyyymmdd    String    @default("2025-01-01")
    completedOn DateTime?
+   status      EpisodeStatus @default(planned)
    tasks       Task[]
+}
+
+enum EpisodeStatus {
+   completed
+   current
+   planned
 }
 
 model Task {
@@ -82,6 +89,7 @@ model Task {
    episodeID     String
    episode       Episode    @relation(fields: [episodeID], references: [id])
    orderIdx      Int        @default(100)
+   indent        Int        @default(0)
 }
 
 enum TaskStatus {

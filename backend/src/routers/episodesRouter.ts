@@ -1,3 +1,4 @@
+import { EpisodeStatus } from '@/generated/prisma'
 import { route, router } from '@/lib/core/trpc'
 import { pris } from '@/lib/db/prisma'
 import { ownership } from '@/mods/ownership'
@@ -47,7 +48,8 @@ const updateDetails = route
 		writeup: z.array(z.any()).optional(), // Assuming writeup is an array of any type, adjust as necessary
 		yyyymmdd: z.string().min(1)
 			.regex(/^\d{4}-\d{2}-\d{2}$/)
-			.optional()
+			.optional(),
+		status: z.enum(EpisodeStatus).optional()
 	}))
 	.mutation(async ({ ctx, input }) => {
 		invariant(ctx.session?.user?.isSuperAdmin, 'User not found or isn\'t admin')
@@ -56,7 +58,9 @@ const updateDetails = route
 		await ownership.ensureUserCanWriteProject(ctx.session.user, ep.projectID)
 		const episode = await pris.episode.update({
 			where: { id: input.id },
-			data: { title: input.title, writeup: input.writeup, yyyymmdd: input.yyyymmdd }
+			data: {
+				title: input.title, writeup: input.writeup, yyyymmdd: input.yyyymmdd, status: input.status
+			}
 		})
 		return episode
 	})

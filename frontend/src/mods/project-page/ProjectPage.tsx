@@ -1,5 +1,7 @@
 import { api, type RouterOutputs } from '@/lib/api'
 import { SolCard } from '@/lib/sol/containers/SolCard'
+import { SolPopoverMenuSpawner } from '@/lib/sol/containers/SolPopover'
+import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { SolTextInputRaw } from '@/lib/sol/inputs/SolTextInputRaw'
 import { Writer } from '@/lib/sol/inputs/writer/Writer'
 import { toast } from '@/lib/sol/overlays/toaster'
@@ -61,9 +63,7 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 			const rect = document.getElementById(horizontalListItemID(selectedEpisode.id))
 			if (rect) {
 				const currentOffsetX = dragScroller.getCurrentOffsetX()
-				console.log('currentOffsetX', currentOffsetX)
 				const elX = rect.getBoundingClientRect().x - currentOffsetX
-				console.log('elX', elX)
 				const desired = -(elX - (window.innerWidth / 2) + (3.5 * 16))
 				dragScroller.animateToOffsetX(desired)
 			}
@@ -83,21 +83,18 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 		})
 	}
 
-	console.log('right', -(120 + 100) * (episodes.state.loaded ? episodes.state.data.length : 0))
-
 	return <SolCard
 		bg='base_darker'
-		className='h-[160px] w-full overflow-x-hidden scrollbar-hide relative'
+		className='h-[160px] !p-0 w-full overflow-x-hidden scrollbar-hide relative'
 	>
 		{ /* draggable */ }
 		<motion.div
 			id='scrollable'
 			ref={dragScroller.draggableRef}
 			className={cn(
-				'bg-neutral-900/50',
-				// outside of original div is not draggable, fix it
+				// 'bg-neutral-900/50',
 				// also make the last one scroll into view
-				'flex gap-[100px] h-full min-w-fit items-stretch px-[calc(50vw-1.5rem-60px)] py-2 select-none',
+				'flex gap-[100px] h-full min-w-fit items-stretch px-[calc(50vw-60px)] py-2 select-none',
 				'cursor-grab active:cursor-grabbing'
 			)}
 		>
@@ -143,7 +140,12 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 			id={horizontalListItemID(episode.id)}
 			className={cn(
 				'!border-2 dark:!border-0 self-center relative h-full aspect-[3/4] flex flex-col justify-center items-center cursor-pointer group !p-0',
-				selected && episode.id === selected.id ? 'ring-2 ring-primary-400 dark:ring-primary-800' : ''
+				selected && (episode.id === selected.id)
+					? 'ring-2 ring-primary-400 dark:ring-primary-700'
+					: '',
+				episode.completedOn
+					? 'opacity-30'
+					: ''
 			)}
 			transitionDuration='d100ms'
 			shadow='sm'
@@ -171,7 +173,7 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-black grid place-items-center text-white/80'>
 					<CheckIcon className='size-3 stroke-[4] translate-y-px' />
 				</div>
-				: ((Date.now() - (episode.createdAt?.getTime() ?? 0)) < (1000 * 60 * 60 * 24))
+				: ((Date.now() - (episode.createdAt?.getTime?.() ?? 0)) < (1000 * 60 * 60 * 24))
 					? <div className='h-4 text-2xs text-neutral-500'>in progress...</div>
 					: null
 			}
@@ -186,10 +188,32 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 	})
 }
 
+const clsCurrentEpDate = [
+	'text-neutral-600 *:dark:text-neutral-400 text-sm px-[14px]',
+	'hover:text-neutral-500 dark:hover:text-neutral-300',
+	'dark:hover:bg-black/20 dark:active:bg-black/30 transition-colors',
+	'hover:bg-neutral-200 active:bg-neutral-300',
+	'cursor-pointer',
+	'inline-block rounded-md'
+].join(' ')
+
+const clsCurrentEpNav = [
+	'text-neutral-600 *:dark:text-neutral-400 text-sm px-[14px]',
+	'hover:text-neutral-500 dark:hover:text-neutral-300',
+	// 'dark:hover:bg-black/30 dark:active:bg-black/40 transition-colors',
+	// 'bg-neutral-100 dark:bg-black/20',
+	// 'hover:bg-neutral-200 active:bg-neutral-300',
+	'transition-colors',
+	'cursor-pointer',
+	'inline-block rounded-md'
+].join(' ')
+
 export const CurrentEpisode: React.FC = () => {
 
 	const [ep, setEp] = useAtom(selectedEpisodeAtom)
 	const [title, setTitle] = useState(ep?.title || '')
+
+	const [showStatusDropdown, setShowStatusDropdown] = useState<boolean>(false)
 
 	useEffect(() => {
 		setTitle(ep?.title || '')
@@ -216,19 +240,32 @@ export const CurrentEpisode: React.FC = () => {
 			})
 	}
 
+	const perfSetStatus = async (status: 'planned' | 'current' | 'completed') => {
+		if (!ep) return
+		return api.episodes.updateDetails.mutate({
+			id: ep.id,
+			status
+		}).then((result) => {
+			setEp((prev) => prev && ({ ...prev, status }))
+			setAtom(projectEpisodesLoader.immerAtom(ep.projectID), (s) => {
+				if (s.loaded) {
+					const idx = s.data.findIndex((e) => e.id === ep.id)
+					if (idx !== -1) {
+						s.data[idx] = { ...s.data[idx], status }
+					}
+				}
+			})
+		})
+	}
+
 	const dispTimestamp = useMemo(() => (ep ? timestamps.toFmt(ep.yyyymmdd) : ''), [ep])
 
 	return ep ? <div className='px-3'>
 
-		<div>
-			<span
+		<div className='flex items-start'>
+			<p
 				className={cn(
-					'text-neutral-600 *:dark:text-neutral-400 text-sm px-[14px]',
-					'hover:text-neutral-500 dark:hover:text-neutral-300',
-					'dark:hover:bg-black/20 dark:active:bg-black/30 transition-colors',
-					'hover:bg-neutral-200 active:bg-neutral-300',
-					'cursor-pointer',
-					'inline-block rounded-md'
+					clsCurrentEpDate
 				)}
 				onClick={() => {
 					const newVal = prompt('Enter a new date (YYYY-MM-DD).')
@@ -241,7 +278,46 @@ export const CurrentEpisode: React.FC = () => {
 				}}
 			>
 				{ dispTimestamp }
-			</span>
+			</p>
+			<div className='grow' />
+			<div
+				className={cn(
+					clsCurrentEpNav,
+					ep.completedOn
+						? 'bg-success-100 dark:bg-success-600/5 hover:dark:bg-success-600/10 active:dark:bg-success-600/20'
+						: 'bg-primary-100 dark:bg-primary-600/5 hover:dark:bg-primary-600/10 active:dark:bg-primary-600/20',
+					'select-none relative'
+				)}
+				onClick={() => setShowStatusDropdown((v) => !v)}
+			>
+				{ ep.status === 'completed'
+					? <span className='!text-success-600 dark:!text-success-400'>Completed</span>
+					: <span className='!text-primary-600 dark:!text-primary-400'>{ ep.status === 'current' ? 'In progress' : 'Planned' }</span>
+				}
+				<SolPopoverMenuSpawner width={110} show={showStatusDropdown}>
+					<SolButton
+						theme='neutral_transparent_to_light'
+						onClick={() => perfSetStatus('planned')}
+						shadow='none'
+						size='sm'
+						className={cn(ep.status === 'planned' ? 'opacity-30 pointer-events-none' : '', 'justify-end')}
+					>Planned</SolButton>
+					<SolButton
+						theme='neutral_transparent_to_light'
+						onClick={() => perfSetStatus('current')}
+						shadow='none'
+						size='sm'
+						className={cn(ep.status === 'current' ? 'opacity-30 pointer-events-none' : '', 'justify-end')}
+					>Current</SolButton>
+					<SolButton
+						theme='neutral_transparent_to_light'
+						onClick={() => perfSetStatus('completed')}
+						shadow='none'
+						size='sm'
+						className={cn(ep.status === 'completed' ? 'opacity-30 pointer-events-none' : '', 'justify-end')}
+					>Completed</SolButton>
+				</SolPopoverMenuSpawner>
+			</div>
 		</div>
 		<div className='h-1 shrink-0' />
 		<SolTextInputRaw

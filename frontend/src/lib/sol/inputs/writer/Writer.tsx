@@ -87,7 +87,7 @@ export const Writer: React.FC<PWriter> = ({
 		<div className='group/writer'>
 			<Slate
 				editor={editor}
-				initialValue={initialValue ?? richTextFeaturePreviewInitialValue}
+				initialValue={isEmpty(initialValue) ? [] : initialValue!}
 				onValueChange={debouncedUpdate}
 			>
 				<WriterToolbar>
