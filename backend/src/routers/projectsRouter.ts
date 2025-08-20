@@ -34,7 +34,42 @@ const get = route
 		})
 	})
 
+const getComplete = route
+	.input(z.object({
+		id: z.string().min(1)
+	}))
+	.query(async ({ ctx, input }) => {
+		invariant(ctx.session?.user.id, 'User not authenticated')
+		const result = await pris.project.findUniqueOrThrow({
+			where: {
+				id: input.id,
+				...ctx.session.user.isSuperAdmin ? {} : {
+					OR: [
+						{ members: { some: { userID: ctx.session.user.id } } },
+						{ ownerID: ctx.session.user.id }
+					]
+				}
+			},
+			include: {
+				episodes: {
+					orderBy: {
+						timestamp: 'asc'
+					},
+					include: {
+						tasks: {
+							orderBy: {
+								orderIdx: 'asc'
+							}
+						}
+					}
+				}
+			}
+		})
+		return { ...result, printedAt: new Date() }
+	})
+
 export const projectsRouter = router({
 	list,
-	get
+	get,
+	getComplete
 })

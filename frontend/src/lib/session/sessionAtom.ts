@@ -2,7 +2,7 @@ import { writeAtom } from '@/utils/jotai-ext'
 import { emptyObj } from '@/utils/react-ext'
 import { atom, useAtomValue } from 'jotai'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { api } from '../api'
 import { toast } from '../sol/overlays/toaster'
 
@@ -29,4 +29,11 @@ export const useSession = (expectLoggedIn: boolean = true) => {
 	}, [session])
 
 	return session
+}
+
+export const useCanUserWrite = () => {
+	const session = useAtomValue(sessionAtom)
+	const loc = useLocation()
+	if (loc.pathname.endsWith('/report')) return false
+	return Boolean(session?.isSuperAdmin)
 }

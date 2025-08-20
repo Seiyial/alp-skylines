@@ -1,8 +1,10 @@
 import type { RouterOutputs } from '@/lib/api'
 import { SolCard } from '@/lib/sol/containers/SolCard'
+import { SolTextLink } from '@/lib/sol/inputs/SolTextLink'
 import { LoadStateDiv, type RCLoadedDiv } from '@/lib/sol/states/LoadStateDiv'
 import { emptyObj } from '@/utils/react-ext'
 import { useNavigate } from 'react-router'
+import performLogout from '../login/performLogout'
 import { projectListLoader } from './projectListLoader'
 
 export const ProjectsListPage: React.FC = () => {
@@ -22,6 +24,8 @@ export const ProjectsListPage: React.FC = () => {
 				state={state}
 				view={ProjectList}
 			/>
+
+			<SolTextLink underline='onhover' className='hover:!decoration-neutral-500/50 !text-sm !text-neutral-500/50 mt-3 mb-1' onClick={() => performLogout()}>Sign out</SolTextLink>
 		</SolCard>
 	</div>
 }

@@ -1,4 +1,5 @@
 import { api, type RouterOutputs } from '@/lib/api'
+import { useCanUserWrite } from '@/lib/session/sessionAtom'
 import { SolCard } from '@/lib/sol/containers/SolCard'
 import { SolPopoverMenuSpawner } from '@/lib/sol/containers/SolPopover'
 import { SolButton } from '@/lib/sol/inputs/SolButton'
@@ -214,6 +215,7 @@ export const CurrentEpisode: React.FC = () => {
 	const [title, setTitle] = useState(ep?.title || '')
 
 	const [showStatusDropdown, setShowStatusDropdown] = useState<boolean>(false)
+	const canwrite = useCanUserWrite()
 
 	useEffect(() => {
 		setTitle(ep?.title || '')
@@ -288,7 +290,8 @@ export const CurrentEpisode: React.FC = () => {
 						: 'bg-primary-100 dark:bg-primary-600/5 hover:dark:bg-primary-600/10 active:dark:bg-primary-600/20',
 					'select-none relative'
 				)}
-				onClick={() => setShowStatusDropdown((v) => !v)}
+				style={canwrite ? {} : { cursor: 'text' }}
+				onClick={canwrite ? () => setShowStatusDropdown((v) => !v) : undefined}
 			>
 				{ ep.status === 'completed'
 					? <span className='!text-success-600 dark:!text-success-400'>Completed</span>
@@ -324,8 +327,9 @@ export const CurrentEpisode: React.FC = () => {
 			onChange={(e) => setTitle(e.target.value)}
 			value={title}
 			onBlur={(e) => perfSave({ title: e.target.value })}
-			className='text-xl !px-3 !py-0.5 font-semibold w-full !border-transparent hover:bg-neutral-100 focus:bg-neutral-200 focus:hover:bg-neutral-200 hover:dark:bg-black/10 focus:dark:bg-black/20 focus:hover:dark:bg-black/20'
+			className='text-xl !px-3 !py-0.5 font-semibold w-full !border-transparent hover:bg-neutral-100 focus:bg-neutral-200 focus:hover:bg-neutral-200 disabled:cursor-text hover:dark:bg-black/10 focus:dark:bg-black/20 focus:hover:dark:bg-black/20'
 			//  hover:!border-neutral-300 focus:!border-neutral-400 dark:hover:!border-neutral-700 dark:focus:!border-neutral-600
+			disabled={!canwrite}
 		/>
 
 		<div className='h-6 shrink-0' />
@@ -335,6 +339,7 @@ export const CurrentEpisode: React.FC = () => {
 			onDebouncedValueChange={(newValue) => {
 				perfSave({ writeup: newValue })
 			}}
+			readonly={!canwrite}
 			minHeightPx={60}
 			placeholder='+ Meeting notes'
 			className='!border-transparent !px-3 hover:bg-neutral-100 focus:bg-neutral-200 focus:hover:bg-neutral-200 hover:dark:bg-black/10 focus:dark:bg-black/20 focus:hover:dark:bg-black/20'

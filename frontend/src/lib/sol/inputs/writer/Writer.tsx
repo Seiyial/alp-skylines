@@ -63,10 +63,11 @@ export type PWriter = {
 	solTheme?: Parameters<typeof cls.textInputVariants2D>[0],
 	initialValue: Descendant[] | undefined | null,
 	onDebouncedValueChange: (value: Descendant[]) => void,
-	minHeightPx?: number
+	minHeightPx?: number,
+	readonly?: boolean
 }
 export const Writer: React.FC<PWriter> = ({
-	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx
+	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx, readonly
 }) => {
 	const renderElement = useCallback(
 		(props: RenderElementProps) => <Element {...props} />,
@@ -111,6 +112,7 @@ export const Writer: React.FC<PWriter> = ({
 					placeholder={placeholder || 'Write something...'}
 					spellCheck
 					autoFocus
+					readOnly={readonly}
 					className={cn(
 						'text-sm/relaxed',
 						'[&_[data-slate-placeholder="true"]]:relative [&_[data-slate-placeholder="true"]]:translate-y-1.5 [&_[data-slate-placeholder="true"]]:font-normal',
