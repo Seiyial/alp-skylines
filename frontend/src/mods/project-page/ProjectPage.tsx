@@ -15,7 +15,7 @@ import {
 	motion
 } from 'framer-motion'
 import { useAtom, useAtomValue } from 'jotai'
-import { ListCheckIcon, ListTodoIcon, PlusIcon } from 'lucide-react'
+import { CheckIcon, ListCheckIcon, ListTodoIcon, PlusIcon } from 'lucide-react'
 import {
 	useEffect, useMemo, useState
 } from 'react'
@@ -177,14 +177,12 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 
 			<div className='grow' />
 
-			{/* { episode.completedOn
-				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-black grid place-items-center text-white/80'>
+			{ episode.completedOn || episode.status === 'completed'
+				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-success-600 grid place-items-center text-white/80 absolute bottom-2 left-1/2 transform -translate-x-1/2'>
 					<CheckIcon className='size-3 stroke-[4] translate-y-px' />
 				</div>
-				: ((Date.now() - (episode.createdAt?.getTime?.() ?? 0)) < (1000 * 60 * 60 * 24))
-					? <div className='h-4 text-2xs text-neutral-500'>in progress...</div>
-					: null
-			} */}
+				: null
+			}
 
 			<div
 				data-label='line-after'
