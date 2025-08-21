@@ -124,6 +124,7 @@ export const Writer: React.FC<PWriter> = ({
 						minHeight: minHeightPx ?? 100
 					}}
 					onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
+						if (event.key === 'Backspace') console.log('backspace')
 						for (const hotkey in HOTKEYS) {
 							if (isHotkey(hotkey, event as any)) {
 								event.preventDefault()
