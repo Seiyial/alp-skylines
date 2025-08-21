@@ -87,7 +87,7 @@ export const PrintableEpisodeTasklist: React.FC<{ injection: TPrintableProjectPr
 						{ task.status === 'DONE' && <CheckSquareIcon className='size-[18px] text-success-500 group-hover:text-primary-500' /> }
 						{ task.status === 'OTHER' && <InfoIcon className='size-[18px] text-neutral-500' /> }
 					</div>
-					<div className='pt-[7px] select-none'>
+					<div className='py-[7px] select-none'>
 						{ task.status === 'DEFERRED' && <span className='dark:text-purple-400 text-purple-500 text-xs'>Deferred&nbsp;&nbsp;</span> }
 						{ task.status === 'DROPPED' && <span className='text-neutral-500/80 text-xs'>Dropped&nbsp;&nbsp;</span> }
 						{task.title}

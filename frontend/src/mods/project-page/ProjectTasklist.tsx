@@ -97,7 +97,7 @@ const Tasklist: RCLoadedDivExtended<RouterOutputs['tasks']['list'], { episodeID:
 			</div> : null }
 			{data.map((task) => (
 				<div
-					className='px-[9px] h-[34px] relative rounded-md hover:dark:bg-black/20 transition-colors text-sm flex flex-row items-start group/task'
+					className='px-[9px] min-h-[34px] h-fit relative rounded-md hover:dark:bg-black/20 transition-colors text-sm flex flex-row items-start group/task'
 					key={task.id}
 					style={task.indent > 0 ? { width: `calc(100% - ${task.indent * 24}px)`, marginLeft: `${task.indent * 24}px` } : {}}
 				>
@@ -123,7 +123,7 @@ const Tasklist: RCLoadedDivExtended<RouterOutputs['tasks']['list'], { episodeID:
 						{ task.status === 'DONE' && <CheckSquareIcon className='size-[18px] text-success-500 group-hover:text-primary-500' /> }
 						{ task.status === 'OTHER' && <InfoIcon className='size-[18px] text-neutral-500' /> }
 					</div>
-					<div className='pt-[7px] select-none'>
+					<div className='py-[7px] select-none'>
 						{ task.status === 'DEFERRED' && <span className='dark:text-purple-400 text-purple-500 text-xs'>Deferred&nbsp;&nbsp;</span> }
 						{ task.status === 'DROPPED' && <span className='text-neutral-500/80 text-xs'>Dropped&nbsp;&nbsp;</span> }
 						{task.title}
