@@ -8,6 +8,9 @@ const list = route
 	.query(async ({ ctx, input }) => {
 		invariant(ctx.session?.user.id, 'User not authenticated')
 		return pris.project.findMany({
+			orderBy: {
+				codename: 'asc'
+			},
 			where: {
 				OR: [
 					{ members: { some: { userID: ctx.session.user.id } } },
