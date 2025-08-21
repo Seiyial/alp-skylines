@@ -344,6 +344,7 @@ export const CurrentEpisode: React.FC = () => {
 		<Writer
 			initialValue={ep.writeup as Descendant[] || [ { text: 'hello' } ]}
 			onDebouncedValueChange={(newValue) => {
+				console.log('onDebouncedValueChange')
 				perfSave({ writeup: newValue })
 			}}
 			pingReflowInitialValue={ep.id}

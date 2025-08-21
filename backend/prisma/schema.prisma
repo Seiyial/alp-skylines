@@ -58,7 +58,7 @@ model ProjectMember {
 model Episode {
    id          String    @id @default(cuid())
    title       String
-   writeup     Json?
+   writeup     Json      @default("[{\"type\":\"paragraph\",\"align\":\"left\",\"children\":[{\"text\":\"\"}]}]")
    projectID   String
    project     Project   @relation(fields: [projectID], references: [id])
    createdAt   DateTime  @default(now())

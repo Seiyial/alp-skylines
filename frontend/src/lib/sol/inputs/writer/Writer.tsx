@@ -89,8 +89,11 @@ export const Writer: React.FC<PWriter> = ({
 		<div className='group/writer'>
 			<Slate
 				editor={editor}
-				initialValue={isEmpty(initialValue) ? [ { text: placeholder || 'Write rich text here..' } ] : initialValue!}
-				onValueChange={debouncedUpdate}
+				initialValue={isEmpty(initialValue) ? [ { 'type': 'paragraph', 'align': 'left', 'children': [ { 'text': '' } ] } ] : initialValue!}
+				onValueChange={(v) => {
+					console.log('valuechange')
+					debouncedUpdate(v)
+				}}
 			>
 				<WriterToolbar>
 					<MarkButton format="bold" icon={BoldIcon} />
