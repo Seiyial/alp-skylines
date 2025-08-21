@@ -26,7 +26,7 @@ export const ProjectHeader: RCFwdDOMElement<HTMLDivElement, { printingInject?: T
 		<div {...props} className={cn('px-4 py-2 flex flex-row items-start', props.className)}>
 			<div>
 				<p className='text-2xs flex w-full uppercase tracking-wider dark:text-primary-400 text-primary-500 py-1 pt-2'>
-					Project { printingInject ? <>report, {format(printingInject.printedAt, 'dd MMMM yyyy')}</> : 'overview' }
+					Project { printingInject ? <>report, {format(printingInject.printedAt, 'dd MMMM yyyy')}</> : '' }
 				</p>
 
 				<h2 className='text-2xl text-neutral-950 dark:text-neutral-200'>
