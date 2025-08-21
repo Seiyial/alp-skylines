@@ -81,7 +81,7 @@ export const PrintableProjectEpisode: React.FC<{ injectEpisode: TPrintableProjec
 
 	const dispTimestamp = useMemo(() => (ep ? timestamps.toFmt(ep.yyyymmdd) : ''), [ep])
 
-	return ep ? <div className='px-3'>
+	return ep ? <div className='px-3 break-inside-avoid'>
 
 		<div className='flex items-start'>
 			<p
