@@ -354,5 +354,7 @@ export const CurrentEpisode: React.FC = () => {
 
 		<EpisodeTasklist episodeID={ep.id} />
 
+		<div className='h-[30vh] shrink-0' />
+
 	</div> : <div className='px-3 text-neutral-600/50'>No episode selected</div>
 }
