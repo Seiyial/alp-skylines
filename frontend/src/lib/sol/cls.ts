@@ -105,7 +105,7 @@ export namespace cls {
 					primary_outlined_fillable: 'bg-transparent border box-border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white',
 
 					neutral_filled: 'bg-neutral-500 text-white hover:bg-neutral-600 active:bg-neutral-700 shadow-primary-500/30',
-					neutral_light: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300',
+					neutral_light: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800 dark:active:bg-neutral-600',
 					neutral_transparent_to_light: 'border-transparent bg-transparent text-neutral-500 hover:bg-neutral-100 active:bg-neutral-200 dark:hover:bg-black/20 dark:active:bg-black/30',
 					neutral_outlined_light: 'bg-transparent border box-border border-neutral-500 text-neutral-500 hover:bg-neutral-100 active:bg-neutral-200 hover:dark:bg-black/20 active:dark:bg-black/30',
 					neutral_outlined_lightborder: 'bg-transparent border box-border border-neutral-200 text-neutral-200 hover:bg-neutral-100 active:bg-neutral-200',

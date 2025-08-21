@@ -41,3 +41,7 @@ export const useIsDevteam = () => {
 	const session = useAtomValue(sessionAtom)
 	return Boolean(session?.isSuperAdmin)
 }
+export const useIsSuperAdmin = () => {
+	const session = useAtomValue(sessionAtom)
+	return Boolean(session?.isSuperAdmin)
+}

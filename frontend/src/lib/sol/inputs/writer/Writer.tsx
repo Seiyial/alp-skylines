@@ -53,7 +53,7 @@ const isEmpty = (value: Descendant[] | undefined | null): boolean => {
 	if (!value || value.length === 0) return true
 	if (value.length > 1) return false
 	const first = value[0]
-	if ('text' in first && !first.text.trim()) return true
+	if (first && 'text' in first && !first.text.trim()) return true
 	return false
 }
 
@@ -88,7 +88,7 @@ export const Writer: React.FC<PWriter> = ({
 		<div className='group/writer'>
 			<Slate
 				editor={editor}
-				initialValue={isEmpty(initialValue) ? [] : initialValue!}
+				initialValue={isEmpty(initialValue) ? [ { text: placeholder || 'Write rich text here..' } ] : initialValue!}
 				onValueChange={debouncedUpdate}
 			>
 				<WriterToolbar>

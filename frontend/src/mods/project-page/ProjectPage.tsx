@@ -56,6 +56,7 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 	const selectedEpisode = useAtomValue(selectedEpisodeAtom)
 
 	const dragScroller = useDragScroll<HTMLDivElement>()
+	const userCanWrite = useCanUserWrite()
 
 	useEffect(() => {
 		const el = dragScroller.draggableRef.current
@@ -105,25 +106,31 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 				loaderType='spinner'
 			/>
 
-			<SolCard
-				className={cn(
-					'aspect-[3/4] snap-center h-full flex flex-col justify-center items-center border-dashed cursor-pointer gap-3 group',
-					'border-neutral-200 hover:border-neutral-300 active:border-neutral-400 hover:active:border-neutral-400',
-					'dark:!border-neutral-800/30 dark:hover:!border-neutral-800/80 dark:active:!border-neutral-800 dark:hover:active:!border-neutral-800',
-					'active:bg-neutral-600/5 transition-colors'
-				)}
-				transitionDuration='d100ms'
-				shadow='none'
-				bg='none'
-				border='medium'
-				onClick={perfCreateNewEpisode}
-			>
-				<PlusIcon className='size-8 dark:text-neutral-800/30 dark:group-hover:text-neutral-800/80' />
-			</SolCard>
+			{
+				userCanWrite && <>
 
-			{ episodes.state.loaded && episodes.state.data.length === 0 && <p className='self-center pl-2 text-neutral-500'>
-				Click to start creating an episode.
-			</p> }
+
+					<SolCard
+						className={cn(
+							'aspect-[3/4] snap-center h-full flex flex-col justify-center items-center border-dashed cursor-pointer gap-3 group',
+							'border-neutral-200 hover:border-neutral-300 active:border-neutral-400 hover:active:border-neutral-400',
+							'dark:!border-neutral-800/30 dark:hover:!border-neutral-800/80 dark:active:!border-neutral-800 dark:hover:active:!border-neutral-800',
+							'active:bg-neutral-600/5 transition-colors'
+						)}
+						transitionDuration='d100ms'
+						shadow='none'
+						bg='none'
+						border='medium'
+						onClick={perfCreateNewEpisode}
+					>
+						<PlusIcon className='size-8 dark:text-neutral-800/30 dark:group-hover:text-neutral-800/80' />
+					</SolCard>
+
+					{ episodes.state.loaded && episodes.state.data.length === 0 && <p className='self-center pl-2 text-neutral-500'>
+						Click to start creating an episode.
+					</p> }
+				</>
+			}
 		</motion.div>
 
 	</SolCard>
@@ -335,7 +342,7 @@ export const CurrentEpisode: React.FC = () => {
 		<div className='h-6 shrink-0' />
 
 		<Writer
-			initialValue={ep.writeup as Descendant[] || []}
+			initialValue={ep.writeup as Descendant[] || [ { text: 'hello' } ]}
 			onDebouncedValueChange={(newValue) => {
 				perfSave({ writeup: newValue })
 			}}

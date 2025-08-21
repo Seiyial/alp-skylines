@@ -68,8 +68,58 @@ const getComplete = route
 		return { ...result, printedAt: new Date() }
 	})
 
+const create = route
+	.input(z.object({
+		name: z.string().min(1),
+		externalName: z.string().min(1),
+		description: z.string().min(1)
+			.optional(),
+		codename: z.string().min(1)
+	}))
+	.mutation(async ({ ctx, input }) => {
+		invariant(ctx.session?.user.isSuperAdmin, 'You are not authorised to perform this action.')
+		return pris.project.create({
+			data: {
+				name: input.name,
+				externalName: input.externalName,
+				description: input.description,
+				codename: input.codename,
+				ownerID: ctx.session.user.id
+			}
+		})
+	})
+
+const update = route
+	.input(z.object({
+		id: z.string().min(1),
+		name: z.string().min(1)
+			.optional(),
+		externalName: z.string().min(1)
+			.optional(),
+		description: z.string().min(1)
+			.optional(),
+		codename: z.string().min(1)
+			.optional()
+	}))
+	.mutation(async ({ ctx, input }) => {
+		invariant(ctx.session?.user.isSuperAdmin, 'You are not authorised to perform this action.')
+		return pris.project.update({
+			where: {
+				id: input.id
+			},
+			data: {
+				name: input.name,
+				externalName: input.externalName,
+				description: input.description,
+				codename: input.codename
+			}
+		})
+	})
+
 export const projectsRouter = router({
 	list,
 	get,
-	getComplete
+	getComplete,
+	create,
+	update
 })
