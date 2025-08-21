@@ -64,10 +64,11 @@ export type PWriter = {
 	initialValue: Descendant[] | undefined | null,
 	onDebouncedValueChange: (value: Descendant[]) => void,
 	minHeightPx?: number,
-	readonly?: boolean
+	readonly?: boolean,
+	pingReflowInitialValue?: number | string
 }
 export const Writer: React.FC<PWriter> = ({
-	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx, readonly
+	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx, readonly, pingReflowInitialValue
 }) => {
 	const renderElement = useCallback(
 		(props: RenderElementProps) => <Element {...props} />,
@@ -77,7 +78,7 @@ export const Writer: React.FC<PWriter> = ({
 		(props: RenderLeafProps) => <Leaf {...props} />,
 		[]
 	)
-	const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+	const editor = useMemo(() => withHistory(withReact(createEditor())), [pingReflowInitialValue])
 
 	const debouncedUpdate = useDebouncedCallback(onDebouncedValueChange, 300)
 	useEffect(() => {
