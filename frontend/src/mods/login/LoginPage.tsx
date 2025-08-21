@@ -36,7 +36,7 @@ export const LoginPage: React.FC = () => {
 			setError('Please enter your email and password.')
 			return
 		}
-		api.sessions.login.mutate({
+		return api.sessions.login.mutate({
 			email,
 			password
 		}).then((res) => {
@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
 		<h1 className='text-4xl dark:text-neutral-100 font-bold mb-5'>Skylines</h1>
 		<p className='text-sm mb-4'>Welcome! please sign in.</p>
 		<p className='fixed text-primary-500/50 text-center left-0 right-0 bottom-3'>Alpine Valley Software Co</p>
-		<form action='#' className='flex w-[90vw] max-w-[300px] flex-col gap-2 items-center'>
+		<div className='flex w-[90vw] max-w-[300px] flex-col gap-2 items-center'>
 
 			<SolTextInputRaw
 				type='email'
@@ -87,6 +87,6 @@ export const LoginPage: React.FC = () => {
 			{/* <div className='text-xs text-neutral-500/80'>
 				To recover your password, please feel free to contact me.
 			</div> */}
-		</form>
+		</div>
 	</div>
 }
