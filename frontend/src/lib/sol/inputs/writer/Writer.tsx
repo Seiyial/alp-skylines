@@ -65,10 +65,10 @@ export type PWriter = {
 	onDebouncedValueChange: (value: Descendant[]) => void,
 	minHeightPx?: number,
 	readonly?: boolean,
-	pingReflowInitialValue?: number | string
+	instanceKeyWithRerender?: string
 }
 export const Writer: React.FC<PWriter> = ({
-	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx, readonly, pingReflowInitialValue
+	placeholder, className, solTheme, initialValue, onDebouncedValueChange, minHeightPx, readonly, instanceKeyWithRerender
 }) => {
 	const renderElement = useCallback(
 		(props: RenderElementProps) => <Element {...props} />,
@@ -78,7 +78,7 @@ export const Writer: React.FC<PWriter> = ({
 		(props: RenderLeafProps) => <Leaf {...props} />,
 		[]
 	)
-	const editor = useMemo(() => withHistory(withReact(createEditor())), [pingReflowInitialValue])
+	const editor = useMemo(() => withHistory(withReact(createEditor())), [])
 
 	const debouncedUpdate = useDebouncedCallback(onDebouncedValueChange, 300)
 	useEffect(() => {
@@ -88,6 +88,7 @@ export const Writer: React.FC<PWriter> = ({
 	return (
 		<div className='group/writer'>
 			<Slate
+				key={instanceKeyWithRerender}
 				editor={editor}
 				initialValue={isEmpty(initialValue) ? [ { 'type': 'paragraph', 'align': 'left', 'children': [ { 'text': '' } ] } ] : initialValue!}
 				onValueChange={(v) => {

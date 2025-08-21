@@ -347,7 +347,7 @@ export const CurrentEpisode: React.FC = () => {
 				console.log('onDebouncedValueChange')
 				perfSave({ writeup: newValue })
 			}}
-			pingReflowInitialValue={ep.id}
+			instanceKeyWithRerender={`ep:${ep.id}:writeup`}
 			readonly={!canwrite}
 			minHeightPx={60}
 			placeholder='+ Meeting notes'
