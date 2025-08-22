@@ -178,7 +178,7 @@ const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({
 			<div className='grow' />
 
 			{ episode.completedOn || episode.status === 'completed'
-				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-success-600 grid place-items-center text-white/80 absolute bottom-2 left-1/2 transform -translate-x-1/2'>
+				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-success-600 grid place-items-center text-white/80 absolute bottom-1 left-1/2 transform -translate-x-1/2'>
 					<CheckIcon className='size-3 stroke-[4] translate-y-px' />
 				</div>
 				: null
