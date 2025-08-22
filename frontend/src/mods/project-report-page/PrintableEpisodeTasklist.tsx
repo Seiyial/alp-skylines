@@ -61,7 +61,7 @@ export const PrintableEpisodeTasklist: React.FC<{ injection: TPrintableProjectPr
 			{data.length === 0 && <div className='text-sm font-normal text-neutral-500/50 mb-1 mt-3 px-3 flex items-center'>No action items</div>}
 			{data.map((task) => (
 				<div
-					className='px-[9px] h-[34px] relative rounded-md hover:dark:bg-black/20 transition-colors text-sm flex flex-row items-start group/task'
+					className='px-[9px] h-fit min-h-[34px] relative rounded-md hover:dark:bg-black/20 transition-colors text-sm flex flex-row items-start group/task'
 					key={task.id}
 					style={task.indent > 0 ? { width: `calc(100% - ${task.indent * 24}px)`, marginLeft: `${task.indent * 24}px` } : {}}
 				>
@@ -91,7 +91,6 @@ export const PrintableEpisodeTasklist: React.FC<{ injection: TPrintableProjectPr
 						{ task.status === 'DEFERRED' && <span className='dark:text-purple-400 text-purple-500 text-xs'>Deferred&nbsp;&nbsp;</span> }
 						{ task.status === 'DROPPED' && <span className='text-neutral-500/80 text-xs'>Dropped&nbsp;&nbsp;</span> }
 						{task.title}
-
 					</div>
 
 					<div
