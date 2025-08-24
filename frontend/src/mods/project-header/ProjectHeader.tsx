@@ -50,7 +50,7 @@ export const ProjectHeader: RCFwdDOMElement<HTMLDivElement, { printingInject?: T
 			{ !printingInject && <SolButton shadow='none' theme='neutral_outlined_light' className='!border-0 z-20 mt-2 group relative' depress='down_px'>
 				<MenuIcon className='text-neutral-300 group-hover:text-neutral-600 dark:text-neutral-700 dark:group-hover:text-neutral-500 transition-colors mx-0 my-1 size-6' />
 
-				<div className='absolute group-hover:block hidden right-0 w-[200px] top-full z-10 bg-white dark:bg-neutral-950 shadow-sm border border-neutral-200 py-2 px-1 dark:border-neutral-800 rounded-md'>
+				<div className='absolute group-hover:block hidden right-0 w-[220px] top-full z-10 bg-white dark:bg-neutral-950 shadow-sm border border-neutral-200 py-2 px-1 dark:border-neutral-800 rounded-md'>
 					{/* <p className='text-xs text-neutral-500 dark:text-neutral-300'>Project Actions</p> */}
 
 					<SolButton
@@ -69,7 +69,7 @@ export const ProjectHeader: RCFwdDOMElement<HTMLDivElement, { printingInject?: T
 						onClick={() => open(`/main/projects/${projectID}/report`, '_blank')}
 					>
 						<FileTextIcon className='size-4 mr-2' />
-						Print report
+						Get printable report
 					</SolButton>
 					<SolButton
 						shadow='none'
