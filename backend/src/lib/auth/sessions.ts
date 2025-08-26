@@ -53,10 +53,10 @@ export namespace sessions {
 		}
 		if ((Date.now() + (1000 * 60 * 60 * 24 * 15)) > session.expiresAt.getTime()) {
 			// session will expire in less than 15 days
-			session.expiresAt = new Date(Date.now() + (1000 * 60 * 60 * 24 * 30))
+			const newExpiresAt = new Date(Date.now() + (1000 * 60 * 60 * 24 * 30))
 			await pris.session.update({
-				where: { id: sessionID },
-				data: { expiresAt: session.expiresAt }
+				where: { id: session.id },
+				data: { expiresAt: newExpiresAt }
 			})
 		}
 		const { user, ...rest } = session

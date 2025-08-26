@@ -9,11 +9,17 @@ import superjson from 'superjson'
 export const elysiaTRPCCreateContext = async (opts: FetchCreateContextFnOptions) => {
 
 	const reqCookie = opts.req.headers.get('cookie')
+	console.log({ reqCookie })
 	const parsedCookie = cookie.parse(reqCookie || '')
+	console.log({ parsedCookie })
 	const sessionToken = parsedCookie[sessions.cookieName]
+	console.log({ sessionToken })
+
+	const session = sessionToken ? await sessions.validateSessionToken(sessionToken) : null
+	console.log({ session })
 
 	return {
-		session: sessionToken ? await sessions.validateSessionToken(sessionToken) : null,
+		session,
 		cookieValueIfAny: sessionToken,
 		resHeaders: opts.resHeaders
 	}
