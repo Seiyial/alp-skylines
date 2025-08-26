@@ -1,6 +1,8 @@
 import { passwords } from '@/lib/auth/passwords'
 import { pris } from '@/lib/db/prisma'
-import { intro, isCancel, outro, spinner, text } from '@clack/prompts'
+import {
+	intro, isCancel, outro, spinner, text
+} from '@clack/prompts'
 
 async function main () {
 	intro('Create a new user')

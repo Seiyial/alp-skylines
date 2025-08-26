@@ -1,6 +1,8 @@
 import { passwords } from '@/lib/auth/passwords'
 import { pris } from '@/lib/db/prisma'
-import { intro, isCancel, multiselect, outro, spinner, text } from '@clack/prompts'
+import {
+	intro, isCancel, multiselect, outro, spinner, text
+} from '@clack/prompts'
 
 async function main () {
 	intro('Create a new user')
@@ -38,6 +40,7 @@ async function main () {
 				email,
 				passwordHash,
 				isSuperAdmin: false,
+				shouldChangePassword: true,
 				memberships: {
 					createMany: {
 						data: linkProjects.map((project) => ({
