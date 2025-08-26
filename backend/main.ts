@@ -17,6 +17,8 @@ const app = new Elysia()
 	// 🌸 CORS
 	.use(cors({
 		origin: env.CORS_WHITELISTED_ORIGINS,
+		credentials: true,
+		preflight: true,
 		allowedHeaders: ['Content-type', 'Authorization', 'Cookie'],
 		exposeHeaders: ['Set-Cookie']
 	}))
@@ -29,7 +31,6 @@ const app = new Elysia()
 			req: ctx.request,
 			createContext: elysiaTRPCCreateContext,
 			onError (p) {
-				console.error('TRPC Error:', p)
 				return p
 			}
 		})

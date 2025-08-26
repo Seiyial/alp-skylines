@@ -61,22 +61,22 @@ const getState = publicRoute
 
 const changePassword = route
 	.input(z.object({
-		oldPassword: z.string().min(1),
-		newPassword: z.string().min(12)
+		oldpwdd: z.string().min(1),
+		nwpwdd: z.string().min(12)
 	}))
 	.mutation(async ({ input, ctx }) => {
 		invariant(ctx.session?.user, 'Not logged in')
-		if (input.oldPassword === input.newPassword) {
+		if (input.oldpwdd === input.nwpwdd) {
 			invariant(false, 'New password must be different from existing password')
 		}
 		if (ctx.session.user.passwordHash) {
-			const existingPasswordOk = passwords.compare(ctx.session.user.passwordHash, input.oldPassword)
+			const existingPasswordOk = passwords.compare(ctx.session.user.passwordHash, input.oldpwdd)
 			invariant(existingPasswordOk, 'Incorrect password')
 		}
 		const updateResult = await pris.user.update({
 			where: { id: ctx.session.user.id },
 			data: {
-				passwordHash: await passwords.generateHash(input.newPassword),
+				passwordHash: await passwords.generateHash(input.nwpwdd),
 				shouldChangePassword: false
 			}
 		})

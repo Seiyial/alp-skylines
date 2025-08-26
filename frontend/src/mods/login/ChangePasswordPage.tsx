@@ -36,8 +36,8 @@ export const ChangePasswordPage: React.FC = () => {
 				return
 			}
 			return api.sessions.changePassword.mutate({
-				newPassword: newPw.value,
-				oldPassword: existingPw.value
+				nwpwdd: newPw.value,
+				oldpwdd: existingPw.value
 			}).then((state) => {
 				setAtom(sessionAtom, state)
 				toast('Password changed', 'Thank you!')
