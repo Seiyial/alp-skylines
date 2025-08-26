@@ -9,13 +9,15 @@ import { ErrorDiv } from '@/lib/sol/states/errors/ErrorDiv'
 import { errLib } from '@/utils/errLib'
 import { setAtom } from '@/utils/jotai-ext'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import performLogout from './performLogout'
 
 export const ChangePasswordPage: React.FC = () => {
 
 	const [error, setError] = useState<string | null>(null)
 	const nav = useNavigate()
+
+	const [qs] = useSearchParams()
 
 	const perfSubmit = () => {
 		const existingPw = document.getElementById('existing-password') as HTMLInputElement
@@ -82,8 +84,9 @@ export const ChangePasswordPage: React.FC = () => {
 				<div className='h-1 shrink-0' />
 
 				<p className='flex items-center flex-col justify-center pt-2 gap-2'>
-					{/* <SolTextLink className='text-sm' underline='thick' onClick={() => perfSkipPasswordChange()}>I don't wish to change my password</SolTextLink> */}
-
+					{ qs.get('optional') === 'true' ? <>
+						<SolTextLink className='text-sm' underline='thick' onClick={() => nav(-1)}>Nevermind (go back)</SolTextLink>
+					</> : null }
 					<SolTextLink className='text-sm' underline='thick' onClick={() => performLogout()}>Sign out</SolTextLink>
 				</p>
 			</div>

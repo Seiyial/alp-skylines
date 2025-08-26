@@ -3,7 +3,9 @@ import { loaderPackE } from '@/lib/loaderPackE'
 import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { cn, type RCFwdDOMElement } from '@/utils/react-ext'
 import { format } from 'date-fns/format'
-import { FileTextIcon, LogOutIcon, MenuIcon, SquareChevronLeftIcon } from 'lucide-react'
+import {
+	FileTextIcon, KeyIcon, LogOutIcon, MenuIcon, SquareChevronLeftIcon
+} from 'lucide-react'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import performLogout from '../login/performLogout'
@@ -68,6 +70,15 @@ export const ProjectHeader: RCFwdDOMElement<HTMLDivElement, { printingInject?: T
 					>
 						<FileTextIcon className='size-4 mr-2' />
 						Printable report
+					</SolButton>
+					<SolButton
+						shadow='none'
+						theme='neutral_transparent_to_light'
+						className='w-full !justify-start items-center'
+						onClick={() => nav('/main/change-password?optional=true')}
+					>
+						<KeyIcon className='size-4 mr-2' />
+						Change pw.
 					</SolButton>
 					<SolButton
 						shadow='none'

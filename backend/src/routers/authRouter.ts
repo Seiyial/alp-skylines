@@ -74,7 +74,7 @@ const repass = route
 		console.log('@repass 2')
 		if (ctx.session.user.passwordHash) {
 			console.log('@repass comparing pw')
-			const existingPasswordOk = passwords.compare(input.oldpwdd, ctx.session.user.passwordHash)
+			const existingPasswordOk = await passwords.compare(input.oldpwdd, ctx.session.user.passwordHash)
 			invariant(existingPasswordOk, 'Incorrect password')
 		}
 		console.log('@repass post comparepw')
