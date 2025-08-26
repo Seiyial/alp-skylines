@@ -65,18 +65,24 @@ const repass = route
 		nwpwdd: z.string().min(12)
 	}))
 	.mutation(async ({ input, ctx }) => {
+		console.log('@repass')
 		invariant(ctx.session?.user, 'Not logged in')
 		if (input.oldpwdd === input.nwpwdd) {
 			invariant(false, 'New password must be different from existing password')
 		}
+		console.log('@repass 2')
 		if (ctx.session.user.passwordHash) {
+			console.log('@repass comparing pw')
 			const existingPasswordOk = passwords.compare(ctx.session.user.passwordHash, input.oldpwdd)
 			invariant(existingPasswordOk, 'Incorrect password')
 		}
+		console.log('@repass post comparepw')
+		const newPasswordHash = await passwords.generateHash(input.nwpwdd)
+		console.log('@generated new password')
 		const updateResult = await pris.user.update({
 			where: { id: ctx.session.user.id },
 			data: {
-				passwordHash: await passwords.generateHash(input.nwpwdd),
+				passwordHash: newPasswordHash,
 				shouldChangePassword: false
 			}
 		})
