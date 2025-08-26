@@ -59,7 +59,7 @@ const getState = publicRoute
 		return pick(cu, 'id', 'email', 'name', 'isSuperAdmin', 'shouldChangePassword')
 	})
 
-const changePassword = route
+const repass = route
 	.input(z.object({
 		oldpwdd: z.string().min(1),
 		nwpwdd: z.string().min(12)
@@ -87,5 +87,5 @@ export const sessionRouter = router({
 	login,
 	logout,
 	getState,
-	changePassword
+	repass
 })

@@ -35,7 +35,7 @@ export const ChangePasswordPage: React.FC = () => {
 				setError('New password must be at least 12 characters long.')
 				return
 			}
-			return api.sessions.changePassword.mutate({
+			return api.sessions.repass.mutate({
 				nwpwdd: newPw.value,
 				oldpwdd: existingPw.value
 			}).then((state) => {
