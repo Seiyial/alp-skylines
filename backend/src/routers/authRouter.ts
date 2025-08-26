@@ -54,6 +54,7 @@ const logout = publicRoute
 const getState = publicRoute
 	.input(z.object({}))
 	.query(async ({ ctx }) => {
+		console.log('@getstate')
 		const cu = ctx.session?.user ?? null
 		if (!cu) return null
 		return pick(cu, 'id', 'email', 'name', 'isSuperAdmin', 'shouldChangePassword')
