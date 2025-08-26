@@ -129,7 +129,7 @@ export default typescriptEslint.config(
 			'prefer-numeric-literals': 'warn',
 			'prefer-object-has-own': 'warn',
 			'prefer-object-spread': 'warn', // see how
-			'ts/prefer-nullish-coalescing': ['warn', { ignorePrimitives: { string: true } }],
+			'ts/prefer-nullish-coalescing': 'off',
 			'ts/prefer-optional-chain': 'warn',
 			'ts/prefer-promise-reject-errors': 'warn',
 			'ts/prefer-readonly': 'warn',

@@ -1,8 +1,9 @@
 import { pick } from '@/lib/utils/lang-ext'
+import { invariant } from '@epic-web/invariant'
 import { z } from 'zod'
 import { passwords } from '../lib/auth/passwords'
 import { sessions } from '../lib/auth/sessions'
-import { publicRoute, router } from '../lib/core/trpc'
+import { publicRoute, route, router } from '../lib/core/trpc'
 import { pris } from '../lib/db/prisma'
 
 const kSessionCookieName = sessions.cookieName
@@ -30,7 +31,7 @@ const login = publicRoute
 			'Set-Cookie',
 			`${kSessionCookieName}=${sessionToken}; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=${60 * 60 * 24 * 30}`
 		)
-		return pick(user, 'id', 'email', 'name', 'isSuperAdmin')
+		return pick(user, 'id', 'email', 'name', 'isSuperAdmin', 'shouldChangePassword')
 	})
 
 const logout = publicRoute
@@ -55,11 +56,36 @@ const getState = publicRoute
 	.query(async ({ ctx }) => {
 		const cu = ctx.session?.user ?? null
 		if (!cu) return null
-		return pick(cu, 'id', 'email', 'name', 'isSuperAdmin')
+		return pick(cu, 'id', 'email', 'name', 'isSuperAdmin', 'shouldChangePassword')
+	})
+
+const changePassword = route
+	.input(z.object({
+		oldPassword: z.string().min(1),
+		newPassword: z.string().min(12)
+	}))
+	.mutation(async ({ input, ctx }) => {
+		invariant(ctx.session?.user, 'Not logged in')
+		if (input.oldPassword === input.newPassword) {
+			invariant(false, 'New password must be different from existing password')
+		}
+		if (ctx.session.user.passwordHash) {
+			const existingPasswordOk = passwords.compare(ctx.session.user.passwordHash, input.oldPassword)
+			invariant(existingPasswordOk, 'Incorrect password')
+		}
+		const updateResult = await pris.user.update({
+			where: { id: ctx.session.user.id },
+			data: {
+				passwordHash: await passwords.generateHash(input.newPassword),
+				shouldChangePassword: false
+			}
+		})
+		return pick(updateResult, 'id', 'email', 'name', 'isSuperAdmin', 'shouldChangePassword')
 	})
 
 export const sessionRouter = router({
 	login,
 	logout,
-	getState
+	getState,
+	changePassword
 })

@@ -9,16 +9,17 @@ datasource db {
 }
 
 model User {
-   id            String          @id @default(cuid())
-   email         String?         @unique
-   passwordHash  String?
-   name          String
-   isSuperAdmin  Boolean         @default(false)
-   sessions      Session[]
-   createdAt     DateTime        @default(now())
-   updatedAt     DateTime        @updatedAt
-   ownedProjects Project[]
-   memberships   ProjectMember[]
+   id                   String          @id @default(cuid())
+   email                String?         @unique
+   passwordHash         String?
+   name                 String
+   isSuperAdmin         Boolean         @default(false)
+   shouldChangePassword Boolean         @default(false)
+   sessions             Session[]
+   createdAt            DateTime        @default(now())
+   updatedAt            DateTime        @updatedAt
+   ownedProjects        Project[]
+   memberships          ProjectMember[]
 }
 
 model Session {
@@ -56,15 +57,15 @@ model ProjectMember {
 }
 
 model Episode {
-   id          String    @id @default(cuid())
+   id          String        @id @default(cuid())
    title       String
-   writeup     Json      @default("[{\"type\":\"paragraph\",\"align\":\"left\",\"children\":[{\"text\":\"\"}]}]")
+   writeup     Json          @default("[{\"type\":\"paragraph\",\"align\":\"left\",\"children\":[{\"text\":\"\"}]}]")
    projectID   String
-   project     Project   @relation(fields: [projectID], references: [id])
-   createdAt   DateTime  @default(now())
-   updatedAt   DateTime  @updatedAt
-   timestamp   DateTime  @default(now())
-   yyyymmdd    String    @default("2025-01-01")
+   project     Project       @relation(fields: [projectID], references: [id])
+   createdAt   DateTime      @default(now())
+   updatedAt   DateTime      @updatedAt
+   timestamp   DateTime      @default(now())
+   yyyymmdd    String        @default("2025-01-01")
    completedOn DateTime?
    status      EpisodeStatus @default(planned)
    tasks       Task[]

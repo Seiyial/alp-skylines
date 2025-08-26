@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'framer-motion'
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { ChangePasswordPage } from './mods/login/ChangePasswordPage'
 import { LoginPage } from './mods/login/LoginPage'
 import { SessionContainer } from './mods/login/SessionContainer'
 import { ProjectsListPage } from './mods/project-list/ProjectsListPage'
@@ -15,6 +16,8 @@ export const Router: React.FC = () => {
 					<Route path='/main/projects' element={<ProjectsListPage />} />
 					<Route path='/main/projects/:projectID' element={<ProjectPage />} />
 					<Route path='/main/projects/:projectID/report' element={<ProjectReportPage />} />
+
+					<Route path='/main/change-password' element={<ChangePasswordPage />} />
 				</Route>
 			</Routes>
 		</AnimatePresence>

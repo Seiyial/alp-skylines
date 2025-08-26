@@ -6,9 +6,11 @@ import { useLocation, useNavigate } from 'react-router'
 import { api } from '../api'
 import { toast } from '../sol/overlays/toaster'
 
-export const sessionAtom = atom<null | { id: string, email: string | null, name: string, isSuperAdmin: boolean }>(null)
+export const sessionAtom = atom<null | { shouldChangePassword: boolean, id: string, email: string | null, name: string, isSuperAdmin: boolean }>(null)
 
-export const useSession = (expectLoggedIn: boolean = true) => {
+export const useSession = (
+	expectLoggedIn: boolean = true
+) => {
 	const nav = useNavigate()
 	const session = useAtomValue(sessionAtom)
 	useEffect(() => {
