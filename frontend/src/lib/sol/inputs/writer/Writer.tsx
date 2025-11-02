@@ -5,7 +5,8 @@ import {
 	AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, CodeIcon, Heading1Icon, Heading2Icon, ItalicIcon, ListIcon, ListOrderedIcon, QuoteIcon, UnderlineIcon
 } from 'lucide-react'
 import React, {
-	type KeyboardEvent, type MouseEvent, useCallback, useEffect, useMemo
+	type KeyboardEvent, type MouseEvent, useCallback, useEffect,
+	useState
 } from 'react'
 import {
 	type Descendant,
@@ -78,7 +79,7 @@ export const Writer: React.FC<PWriter> = ({
 		(props: RenderLeafProps) => <Leaf {...props} />,
 		[]
 	)
-	const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+	const [editor] = useState(() => withHistory(withReact(createEditor())))
 
 	const debouncedUpdate = useDebouncedCallback(onDebouncedValueChange, 300)
 	useEffect(() => {
