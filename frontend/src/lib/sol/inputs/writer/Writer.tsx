@@ -116,7 +116,8 @@ export const Writer: React.FC<PWriter> = ({
 					renderLeaf={renderLeaf}
 					placeholder={placeholder || 'Write something...'}
 					spellCheck
-					autoFocus
+					autoFocus={false}
+					key={instanceKeyWithRerender}
 					readOnly={readonly}
 					className={cn(
 						'text-sm/relaxed',
