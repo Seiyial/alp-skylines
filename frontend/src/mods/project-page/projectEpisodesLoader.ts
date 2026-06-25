@@ -9,3 +9,5 @@ export const projectEpisodesLoader = loaderPackE.forFamilyPayload(
 )
 
 export const selectedEpisodeAtom = atom<RouterOutputs['episodes']['list'][number] | null>(null)
+
+export const episodeSidebarOpenAtom = atom<boolean>(true)

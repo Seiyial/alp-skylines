@@ -3,12 +3,15 @@ import { loaderPackE } from '@/lib/loaderPackE'
 import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { cn, type RCFwdDOMElement } from '@/utils/react-ext'
 import { format } from 'date-fns/format'
+import { useAtom } from 'jotai'
 import {
-	FileTextIcon, KeyIcon, LogOutIcon, MenuIcon, SquareChevronLeftIcon
+	FileTextIcon, KeyIcon, LogOutIcon, MenuIcon,
+	SquareChevronLeftIcon
 } from 'lucide-react'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import performLogout from '../login/performLogout'
+import { episodeSidebarOpenAtom } from '../project-page/projectEpisodesLoader'
 import type { TPrintableProjectProps } from '../project-report-page/printableProps'
 
 export const projectDetailsLoader = loaderPackE.forFamilyPayload(
@@ -23,11 +26,13 @@ export const ProjectHeader: RCFwdDOMElement<HTMLDivElement, { printingInject?: T
 	const qProps = useMemo(() => (projectID ? ({ id: projectID }) : null), [projectID])
 	const project = projectDetailsLoader.useStateWithLoader(qProps)
 	const nav = useNavigate()
+	const [sidebarOpen, setSidebarOpen] = useAtom(episodeSidebarOpenAtom)
 
 	return <>
-		<div {...props} className={cn('px-4 py-2 flex flex-row items-start', props.className)}>
+		<div {...props} className={cn('px-6 py-2 flex flex-row items-start', props.className)}>
+
 			<div>
-				<p className='text-2xs flex w-full uppercase tracking-wider dark:text-primary-400 text-primary-500 py-1 pt-2'>
+				<p className='text-2xs flex w-full uppercase tracking-wider dark:text-primary-400 text-primary-500 py-0 pt-2'>
 					Project { printingInject ? <>report, {format(printingInject.printedAt, 'dd MMMM yyyy')}</> : '' }
 				</p>
 

@@ -1,12 +1,14 @@
 {
 	"name": "skyline",
 	"scripts": {
-		"lint": "eslint . --ext .ts,.tsx"
+		"lint": "eslint . --ext .ts,.tsx",
+		"dev": "concurrently --names \"backend,frontend\" \"cd backend && bun run dev\" \"cd frontend && bun run dev\""
 	},
 	"type": "module",
 	"devDependencies": {
 		"@eslint/js": "^9.33.0",
 		"@stylistic/eslint-plugin": "^5.2.3",
+		"concurrently": "10.0.3",
 		"eslint-plugin-react": "^7.37.5",
 		"globals": "^16.3.0",
 		"typescript-eslint": "^8.39.1"

@@ -1,20 +1,17 @@
 import { api, type RouterOutputs } from '@/lib/api'
 import { loaderPackE } from '@/lib/loaderPackE'
 import { useCanUserWrite } from '@/lib/session/sessionAtom'
-import { SolPopoverMenuSpawner } from '@/lib/sol/containers/SolPopover'
-import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { SolTextInputRaw } from '@/lib/sol/inputs/SolTextInputRaw'
 import { toast } from '@/lib/sol/overlays/toaster'
 import { LoadStateDivExtended, type RCLoadedDivExtended } from '@/lib/sol/states/LoadStateDiv'
-import { dom } from '@/utils/dom-ext'
 import { errLib } from '@/utils/errLib'
 import { setAtom, writeAtom } from '@/utils/jotai-ext'
 import { cn } from '@/utils/react-ext'
 import type { TaskStatus } from '@s/generated/prisma'
 import {
-	CheckSquareIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon, EditIcon, InfoIcon, ListTodoIcon, MoreHorizontalIcon, PlayIcon, SquareIcon, TrashIcon, XIcon
+	CheckSquareIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon, EditIcon, InfoIcon, ListTodoIcon, PlayIcon, SquareIcon, TrashIcon, XIcon
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 
 const tasksLoader = loaderPackE.forFamilyPayload(
 	'tasks',
@@ -30,6 +27,21 @@ const nextStatus = (status: TaskStatus): TaskStatus => {
 	if (status === 'DONE') return 'OTHER'
 	return 'TODO'
 }
+
+const TaskInlineBtn: React.FC<{ disabled?: boolean, onClick: () => void, title: string, children: ReactNode }> = ({ disabled, onClick, title, children }) => (
+	<button
+		type='button'
+		disabled={disabled}
+		title={title}
+		onClick={onClick}
+		className={cn(
+			'p-1.5 rounded-md text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-200 active:bg-neutral-300 hover:dark:bg-black/20 active:dark:bg-black/40 transition-colors',
+			disabled ? 'opacity-40 pointer-events-none' : ''
+		)}
+	>
+		{ children }
+	</button>
+)
 
 export const EpisodeTasklist: React.FC<{ episodeID: string }> = ({ episodeID }) => {
 
@@ -49,7 +61,6 @@ const Tasklist: RCLoadedDivExtended<RouterOutputs['tasks']['list'], { episodeID:
 
 	const [newTaskTitle, setNewTaskTitle] = useState('')
 	const [newTaskIndent, setNewTaskIndent] = useState(0)
-	const [showContextMenuTaskID, setShowContextMenuTaskID] = useState<string | null>(null)
 
 	const perfAddTask = () => {
 		api.tasks.create.mutate({
@@ -89,6 +100,44 @@ const Tasklist: RCLoadedDivExtended<RouterOutputs['tasks']['list'], { episodeID:
 			})
 	}
 
+	const perfRename = (taskID: string, episodeID: string, currentTitle: string) => {
+		const newTitle = prompt('Enter new title:', currentTitle)
+		if (!newTitle?.trim()) return
+		api.tasks.updateDetails.mutate({ title: newTitle, id: taskID })
+			.then(() => {
+				writeAtom(tasksLoader.immerAtom(episodeID), (s) => {
+					if (s.loaded) {
+						const idx = s.data.findIndex((t) => t.id === taskID)
+						if (idx !== -1) {
+							s.data[idx].title = newTitle
+						}
+					}
+				})
+			})
+			.catch((e) => {
+				toast('Failed to update task', errLib.logAndExtractError(e))
+			})
+	}
+
+	const perfDelete = (taskID: string, episodeID: string) => {
+		const sure = confirm('Are you sure you want to delete this task?')
+		if (!sure) return
+		api.tasks.deleteTask.mutate({ id: taskID })
+			.then(() => {
+				writeAtom(tasksLoader.immerAtom(episodeID), (s) => {
+					if (s.loaded) {
+						const idx = s.data.findIndex((t) => t.id === taskID)
+						if (idx !== -1) {
+							s.data.splice(idx, 1)
+						}
+					}
+				})
+			})
+			.catch((e) => {
+				toast('Failed to delete task', errLib.logAndExtractError(e))
+			})
+	}
+
 	return (
 		<div className='pt-3 flex flex-col items-stretch'>
 			{ data.length > 0 ? <div className='text-lg font-normal text-neutral-500/50 mb-1 mt-3 px-3 flex items-center'>
@@ -123,106 +172,42 @@ const Tasklist: RCLoadedDivExtended<RouterOutputs['tasks']['list'], { episodeID:
 						{ task.status === 'DONE' && <CheckSquareIcon className='size-[18px] text-success-500 group-hover:text-primary-500' /> }
 						{ task.status === 'OTHER' && <InfoIcon className='size-[18px] text-neutral-500' /> }
 					</div>
-					<div className='py-[7px] select-none'>
+					<div className='py-[7px] select-none grow min-w-0'>
 						{ task.status === 'DEFERRED' && <span className='dark:text-purple-400 text-purple-500 text-xs'>Deferred&nbsp;&nbsp;</span> }
 						{ task.status === 'DROPPED' && <span className='text-neutral-500/80 text-xs'>Dropped&nbsp;&nbsp;</span> }
 						{task.title}
-
 					</div>
 
-					<div
-						style={{ pointerEvents: canWrite ? 'auto' : 'none' }}
-						className='absolute opacity-0 group-hover/task:opacity-50 hover:opacity-100 group-hover/task:hover:opacity-100 right-0.5 top-0.5 p-1.5 cursor-pointer group/optionbtn transition-opacity hover:dark:bg-black/20 hover:bg-neutral-200 rounded-md active:dark:bg-black/40 active:bg-neutral-300'
-						onClick={() => (showContextMenuTaskID === task.id
-							? setShowContextMenuTaskID(null)
-							: setShowContextMenuTaskID(task.id)
-						)}
-					>
-						<MoreHorizontalIcon className='size-[18px] text-neutral-500 group-hover/optionbtn:dark:text-neutral-300 group-hover/optionbtn:text-neutral-700 transition-colors' />
-
-						<SolPopoverMenuSpawner
-							width={160}
-							show={showContextMenuTaskID === task.id}
-							onClose={() => setShowContextMenuTaskID(null)}
-						>
-							<div className='flex items-center justify-center'>
-								<SolButton
-									theme='neutral_transparent_to_light'
-									onClick={dom.only(() => deltaIndent(task.id, task.indent - 1))}
-									shadow='none'
-									className='!px-2'
-								>
-									<ChevronLeftIcon className={cn('size-4', task.indent === 0 ? 'pointer-events-none opacity-40' : '')} />
-								</SolButton>
-								<div className='px-2'>Indent: { task.indent }</div>
-								<SolButton
-									theme='neutral_transparent_to_light'
-									onClick={dom.only(() => deltaIndent(task.id, task.indent + 1))}
-									shadow='none'
-									className='!px-2'
-								>
-									<ChevronRightIcon className={cn('size-4', task.indent === 3 ? 'pointer-events-none opacity-40' : '')} />
-								</SolButton>
-							</div>
-							<div className='h-1 shrink-0' />
-							<SolButton
-								theme='neutral_transparent_to_light'
-								onClick={dom.only((e) => {
-									const newTitle = prompt('Enter new title:', task.title)
-									if (newTitle?.trim()) {
-										api.tasks.updateDetails.mutate({ title: newTitle, id: task.id })
-											.then(() => {
-												writeAtom(tasksLoader.immerAtom(task.episodeID), (s) => {
-													if (s.loaded) {
-														const idx = s.data.findIndex((t) => t.id === task.id)
-														if (idx !== -1) {
-															s.data[idx].title = newTitle
-														}
-													}
-												})
-											})
-											.catch((e) => {
-												toast('Failed to update task', errLib.logAndExtractError(e))
-											})
-									}
-								})}
-								shadow='none'
-								size='sm'
-								className='!px-1.5 !py-1.5 gap-2 !justify-start'
+					{ canWrite && (
+						<div className='flex items-center gap-0.5 ml-1 shrink-0 self-center opacity-0 group-hover/task:opacity-100 hover:opacity-100 group-hover/task:hover:opacity-100 transition-opacity'>
+							<TaskInlineBtn
+								disabled={task.indent === 0}
+								onClick={() => deltaIndent(task.id, task.indent - 1)}
+								title='Decrease indent'
 							>
-								<EditIcon className={cn('mx-2 size-4', task.indent === 3 ? 'pointer-events-none opacity-40' : '')} />
-								Rename
-							</SolButton>
-							<SolButton
-								theme='neutral_transparent_to_light'
-								onClick={dom.only((e) => {
-									const sure = confirm('Are you sure you want to delete this task?')
-									if (sure) {
-										api.tasks.deleteTask.mutate({ id: task.id })
-											.then(() => {
-												writeAtom(tasksLoader.immerAtom(task.episodeID), (s) => {
-													if (s.loaded) {
-														const idx = s.data.findIndex((t) => t.id === task.id)
-														if (idx !== -1) {
-															s.data.splice(idx, 1)
-														}
-													}
-												})
-											})
-											.catch((e) => {
-												toast('Failed to delete task', errLib.logAndExtractError(e))
-											})
-									}
-								})}
-								shadow='none'
-								size='sm'
-								className='!px-1.5 !py-1.5 gap-2 !justify-start'
+								<ChevronLeftIcon className='size-4' />
+							</TaskInlineBtn>
+							<TaskInlineBtn
+								disabled={task.indent === 3}
+								onClick={() => deltaIndent(task.id, task.indent + 1)}
+								title='Increase indent'
 							>
-								<TrashIcon className={cn('mx-2 size-4', task.indent === 3 ? 'pointer-events-none opacity-40' : '')} />
-								Delete
-							</SolButton>
-						</SolPopoverMenuSpawner>
-					</div>
+								<ChevronRightIcon className='size-4' />
+							</TaskInlineBtn>
+							<TaskInlineBtn
+								onClick={() => perfRename(task.id, task.episodeID, task.title)}
+								title='Rename'
+							>
+								<EditIcon className='size-4' />
+							</TaskInlineBtn>
+							<TaskInlineBtn
+								onClick={() => perfDelete(task.id, task.episodeID)}
+								title='Delete'
+							>
+								<TrashIcon className='size-4' />
+							</TaskInlineBtn>
+						</div>
+					) }
 				</div>
 			))}
 

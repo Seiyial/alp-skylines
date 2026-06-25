@@ -3,9 +3,9 @@ FROM ubuntu:22.04 AS builder
 RUN apt-get update 
 RUN apt-get install -y curl gnupg zip unzip openssl
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
-ENV BUN_INSTALL=$HOME/bun
+ENV BUN_INSTALL=/root/bun
 RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH=$PATH:$HOME/bun/bin
+ENV PATH=$PATH:/root/bun/bin
 
 WORKDIR /app/backend
 COPY backend/ .

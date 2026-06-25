@@ -1,6 +1,5 @@
 import { api, type RouterOutputs } from '@/lib/api'
 import { useCanUserWrite } from '@/lib/session/sessionAtom'
-import { SolCard } from '@/lib/sol/containers/SolCard'
 import { SolPopoverMenuSpawner } from '@/lib/sol/containers/SolPopover'
 import { SolButton } from '@/lib/sol/inputs/SolButton'
 import { SolTextInputRaw } from '@/lib/sol/inputs/SolTextInputRaw'
@@ -11,21 +10,17 @@ import { errLib } from '@/utils/errLib'
 import { setAtom, writeAtom } from '@/utils/jotai-ext'
 import { cn } from '@/utils/react-ext'
 import { format } from 'date-fns/format'
-import {
-	motion
-} from 'framer-motion'
 import { useAtom, useAtomValue } from 'jotai'
-import { CheckIcon, ListCheckIcon, ListTodoIcon, PlusIcon } from 'lucide-react'
+import { CheckIcon, CircleIcon, PlayIcon, PlusIcon } from 'lucide-react'
 import {
-	useEffect, useMemo, useState
+	Fragment, useEffect, useMemo, useState
 } from 'react'
 import { useParams } from 'react-router'
 import type { Descendant } from 'slate'
 import { ProjectHeader } from '../project-header/ProjectHeader'
 import { timestamps } from '../utils/timestamps'
-import { projectEpisodesLoader, selectedEpisodeAtom } from './projectEpisodesLoader'
+import { episodeSidebarOpenAtom, projectEpisodesLoader, selectedEpisodeAtom } from './projectEpisodesLoader'
 import { EpisodeTasklist } from './ProjectTasklist'
-import { useDragScroll } from './useHorizDragScroll'
 
 export const ProjectPage: React.FC = () => {
 
@@ -36,41 +31,22 @@ export const ProjectPage: React.FC = () => {
 	>
 		<ProjectHeader />
 
-		<div className='h-2 shrink-0' />
-
-		<div className='px-3'>
-			{ projectID && <ProjectEpisodeTimeline /> }
+		<div className='flex grow min-h-0'>
+			{ projectID && <ProjectEpisodeSidebar /> }
+			<div className='flex-1 min-w-0 overflow-y-auto'>
+				<CurrentEpisode />
+			</div>
 		</div>
-
-		<div className='p-3 shrink-0' />
-		<CurrentEpisode />
 	</div>
 }
 
-export const ProjectEpisodeTimeline: React.FC = () => {
+export const ProjectEpisodeSidebar: React.FC = () => {
 
 	const { projectID } = useParams()
 	const props = useMemo(() => (projectID ? ({ projectID: projectID ?? '-' }) : null), [projectID])
 	const episodes = projectEpisodesLoader.useStateWithLoader(props)
-
-	const selectedEpisode = useAtomValue(selectedEpisodeAtom)
-
-	const dragScroller = useDragScroll<HTMLDivElement>()
+	const open = useAtomValue(episodeSidebarOpenAtom)
 	const userCanWrite = useCanUserWrite()
-
-	useEffect(() => {
-		const el = dragScroller.draggableRef.current
-		if (!el) return
-		if (selectedEpisode) {
-			const rect = document.getElementById(horizontalListItemID(selectedEpisode.id))
-			if (rect) {
-				const currentOffsetX = dragScroller.getCurrentOffsetX()
-				const elX = rect.getBoundingClientRect().x - currentOffsetX
-				const desired = -(elX - (window.innerWidth / 2) + (3.5 * 16))
-				dragScroller.animateToOffsetX(desired)
-			}
-		}
-	}, [selectedEpisode])
 
 	const perfCreateNewEpisode = async () => {
 		return api.episodes.create.mutate({
@@ -85,113 +61,97 @@ export const ProjectEpisodeTimeline: React.FC = () => {
 		})
 	}
 
-	return <SolCard
-		bg='base_darker'
-		className='h-[160px] !p-0 w-full overflow-x-hidden scrollbar-hide relative'
-	>
-		{ /* draggable */ }
-		<motion.div
-			id='scrollable'
-			ref={dragScroller.draggableRef}
-			className={cn(
-				// 'bg-neutral-900/50',
-				// also make the last one scroll into view
-				'flex gap-[100px] h-full min-w-fit items-stretch px-[calc(50vw-60px)] py-2 select-none',
-				'cursor-grab active:cursor-grabbing'
-			)}
-		>
-			<LoadStateDiv
-				state={episodes.state}
-				view={EpisodeHorizontalList}
-				loaderType='spinner'
-			/>
+	if (!open || !projectID) return null
 
-			{
-				userCanWrite && <>
-
-
-					<SolCard
-						className={cn(
-							'aspect-[3/4] snap-center h-full flex flex-col justify-center items-center border-dashed cursor-pointer gap-3 group',
-							'border-neutral-200 hover:border-neutral-300 active:border-neutral-400 hover:active:border-neutral-400',
-							'dark:!border-neutral-800/30 dark:hover:!border-neutral-800/80 dark:active:!border-neutral-800 dark:hover:active:!border-neutral-800',
-							'active:bg-neutral-600/5 transition-colors'
-						)}
-						transitionDuration='d100ms'
-						shadow='none'
-						bg='none'
-						border='medium'
-						onClick={perfCreateNewEpisode}
-					>
-						<PlusIcon className='size-8 dark:text-neutral-800/30 dark:group-hover:text-neutral-800/80' />
-					</SolCard>
-
-					{ episodes.state.loaded && episodes.state.data.length === 0 && <p className='self-center pl-2 text-neutral-500'>
-						Click to start creating an episode.
-					</p> }
-				</>
-			}
-		</motion.div>
-
-	</SolCard>
-}
-
-const horizontalListItemID = (id: string) => `episode-${id}-card`
-
-const EpisodeHorizontalList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({ data }) => {
-
-	const selected = useAtomValue(selectedEpisodeAtom)
-
-	return data.map((episode) => {
-		return <SolCard
-			key={episode.id}
-			id={horizontalListItemID(episode.id)}
-			className={cn(
-				'!border-2 dark:!border-0 self-center relative h-full aspect-[3/4] flex flex-col justify-center items-center cursor-pointer group !p-0',
-				selected && (episode.id === selected.id)
-					? 'ring-2 ring-primary-400 dark:ring-primary-700'
-					: '',
-				episode.completedOn
-					? 'opacity-30'
-					: ''
-			)}
-			transitionDuration='d100ms'
-			shadow='sm'
-			border='none'
-			borderColor='neutral'
-			onClick={() => setAtom(selectedEpisodeAtom, episode)}
-		>
-			<div className='text-2xs uppercase leading-wide dark:text-neutral-600 text-neutral-500'>
-				{timestamps.toFmt(episode.yyyymmdd)}
+	return (
+		<div className='w-60 shrink-0 flex flex-col m-2 ml-6 rounded-md border border-neutral-200 dark:border-neutral-800/60 overflow-hidden'>
+			<div className='flex items-center justify-between px-2.5 py-1.5 shrink-0 border-b border-neutral-200/70 dark:border-neutral-800/60'>
+				<span className='text-2xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400'>Episodes</span>
+				{ userCanWrite && <button
+					type='button'
+					onClick={perfCreateNewEpisode}
+					title='New episode'
+					className='p-1 rounded-md text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:bg-black/20 transition-colors cursor-pointer'
+				>
+					<PlusIcon className='size-4' />
+				</button> }
 			</div>
 
-			<div className='grow' />
+			<div className='flex-1 overflow-y-auto py-1 px-1.5'>
+				<LoadStateDiv
+					state={episodes.state}
+					view={EpisodeSidebarList}
+					loaderType='spinner'
+				/>
+				{ episodes.state.loaded && episodes.state.data.length === 0 && userCanWrite && (
+					<p className='px-2.5 py-2 text-xs text-neutral-500/60'>Click + to start creating an episode.</p>
+				) }
+			</div>
+		</div>
+	)
+}
 
-			{ episode.completedOn
-				? <ListCheckIcon className='size-6 text-neutral-600 dark:text-neutral-300' />
-				: <ListTodoIcon className='size-6 text-neutral-600 dark:text-neutral-300' />
-			}
+type Episode = RouterOutputs['episodes']['list'][number]
 
-			<div className='h-2 shrink-0' />
-			<div className='line-clamp-3 text-xs text-center px-1 font-medium dark:text-neutral-500 text-neutral-900'>{ episode.title }</div>
+const EpisodeSidebarList: RCLoadedDiv<RouterOutputs['episodes']['list']> = ({ data }) => {
 
-			<div className='grow' />
+	const selected = useAtomValue(selectedEpisodeAtom)
+	// Backend returns oldest-first (by timestamp). Reverse for latest-on-top.
+	const ordered = data.slice().reverse()
+	let lastYear: string | null = null
 
-			{ episode.completedOn || episode.status === 'completed'
-				? <div className='size-4 rounded-full mb-1 bg-neutral-100 dark:bg-success-600 grid place-items-center text-white/80 absolute bottom-1 left-1/2 transform -translate-x-1/2'>
-					<CheckIcon className='size-3 stroke-[4] translate-y-px' />
-				</div>
-				: null
-			}
+	return (
+		<div className='flex flex-col'>
+			{ordered.map((episode) => {
+				const year = (episode.yyyymmdd || '').slice(0, 4) || '—'
+				const showYearHeader = year !== lastYear
+				lastYear = year
+				return (
+					<Fragment key={episode.id}>
+						{ showYearHeader && (
+							<div className='px-2.5 mt-2 mb-0.5 text-2xs font-mono uppercase tracking-wider text-neutral-400/80 dark:text-neutral-500/70'>
+								{ year }
+							</div>
+						) }
+						<EpisodeSidebarItem episode={episode} selected={selected} />
+					</Fragment>
+				)
+			})}
+		</div>
+	)
+}
 
-			<div
-				data-label='line-after'
-				className={cn(
-					'absolute top-1/2 z-10 left-full h-0.5 w-[100px] bg-neutral-500/40 dark:bg-neutral-500/20 dark:shadow-sm shadow-black/20'
-				)}
-			/>
-		</SolCard>
-	})
+const EpisodeSidebarItem: React.FC<{ episode: Episode, selected: Episode | null }> = ({ episode, selected }) => {
+
+	const completed = Boolean(episode.completedOn) || episode.status === 'completed'
+	const inProgress = episode.status === 'current'
+	const isSel = Boolean(selected && episode.id === selected.id)
+
+	return (
+		<button
+			type='button'
+			onClick={() => setAtom(selectedEpisodeAtom, episode)}
+			className={cn(
+				'cursor-pointer group flex items-center gap-2 w-full text-left px-2.5 py-1.5 rounded-md transition-colors',
+				isSel
+					? 'bg-primary-100 dark:bg-primary-600/10'
+					: 'hover:bg-neutral-100 dark:hover:bg-black/15',
+				completed && !isSel ? 'opacity-60' : ''
+			)}
+		>
+			{ completed
+				? <CheckIcon className='size-4 shrink-0 text-success-500' />
+				: inProgress
+					? <PlayIcon className='size-4 shrink-0 text-amber-500 fill-amber-500' />
+					: <CircleIcon className='size-4 shrink-0 text-neutral-300 dark:text-neutral-700' /> }
+
+			<span className='font-mono text-xs uppercase tracking-tight shrink-0 text-neutral-300 dark:text-neutral-600 translate-y-[1.5px]'>
+				{ timestamps.toMonDay(episode.yyyymmdd) }
+			</span>
+
+			<span className='text-xs font-medium truncate text-neutral-800 dark:text-neutral-200'>{ episode.title }</span>
+		</button>
+	)
 }
 
 const clsCurrentEpDate = [
@@ -267,7 +227,7 @@ export const CurrentEpisode: React.FC = () => {
 
 	const dispTimestamp = useMemo(() => (ep ? timestamps.toFmt(ep.yyyymmdd) : ''), [ep])
 
-	return ep ? <div className='px-3'>
+	return ep ? <div className='px-3 pt-2'>
 
 		<div className='flex items-start'>
 			<p
@@ -286,7 +246,7 @@ export const CurrentEpisode: React.FC = () => {
 			>
 				{ dispTimestamp }
 			</p>
-			<div className='grow' />
+			<div className='w-2 shrink-0' />
 			<div
 				className={cn(
 					clsCurrentEpNav,
