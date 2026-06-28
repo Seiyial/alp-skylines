@@ -40,6 +40,17 @@ export const ProjectPage: React.FC = () => {
 	</div>
 }
 
+const _simpleShorten = (title: string) => {
+	let t = title.trim()
+	t = t.replace('Simulation', 'Sim.')
+	t = t.replace('simulation', 'sim.')
+	t = t.replace('version', 'ver.')
+	t = t.replace('Version', 'Ver.')
+	t = t.replace('Meeting', 'Mtg.')
+	t = t.replace('meeting', 'mtg.')
+	return t
+}
+
 export const ProjectEpisodeSidebar: React.FC = () => {
 
 	const { projectID } = useParams()
@@ -149,7 +160,7 @@ const EpisodeSidebarItem: React.FC<{ episode: Episode, selected: Episode | null 
 				{ timestamps.toMonDay(episode.yyyymmdd) }
 			</span>
 
-			<span className='text-xs font-medium truncate text-neutral-800 dark:text-neutral-200'>{ episode.title }</span>
+			<span className='text-xs font-medium truncate text-neutral-800 dark:text-neutral-200'>{ _simpleShorten(episode.title) }</span>
 		</button>
 	)
 }
