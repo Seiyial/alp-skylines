@@ -110,3 +110,13 @@ html, body, #app {
 		color: currentColor;
 	}
 }
+
+*::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+	background-color: var(--color-primary-950);
+}
+*::-webkit-scrollbar-thumb {
+	background-color: var(--color-primary-600);
+	border-radius: 2px;
+}
