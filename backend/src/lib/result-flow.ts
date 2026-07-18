@@ -25,11 +25,15 @@ export namespace r {
 	// 		? { ok: true } as T extends undefined ? ResultOk<undefined> : ResultOk<T>
 	// 		: { ok: true, data } as T extends undefined ? ResultOk<undefined> : ResultOk<T>
 	// }
-	export const fail = <E extends (ErrCode | ErrMsg | undefined) = undefined> (msgAsCode?: E, props?: ErrorPropDump) => msgAsCode === undefined
+	export const fail = <E extends (ErrCode | ErrMsg | undefined) = undefined> (msgAsCode?: E, props?: ErrorPropDump) => (msgAsCode === undefined
 		? { ok: false, props } as ResultFail<E>
-		: { ok: false, errCode: msgAsCode, err: msgAsCode, props } as ResultFail<E>
+		: {
+			ok: false, errCode: msgAsCode, err: msgAsCode, props
+		} as ResultFail<E>)
 	export const failWCode = <E extends (ErrCode | ErrMsg | undefined) = undefined> (code: E, msg: ErrMsg, props?: ErrorPropDump) => {
-		return { ok: false, errCode: code, err: msg, props } as ResultFail<E>
+		return {
+			ok: false, errCode: code, err: msg, props
+		} as ResultFail<E>
 	}
 	export const fwd = <E extends (ErrCode | ErrMsg | undefined) = undefined> (result: ResultFail<E>, contextNote: string) => {
 		result.props ??= {}
@@ -41,7 +45,7 @@ export namespace r {
 		return result.ok ? { ok: true } : result
 	}
 
-	export function decorateToReturnResult <F extends ((...props: any[]) => any)>(
+	export function decorateToReturnResult<F extends ((...props: any[]) => any)> (
 		f: F
 	): ((...props: Parameters<F>) => Result<ReturnType<F>>) {
 		return ((...params: Parameters<F>) => {
@@ -64,7 +68,7 @@ export namespace r {
 		return Boolean((typeof result === 'object') && result && typeof (result as any).ok === 'boolean')
 	}
 
-	export async function bind <F extends (() => Promise<any>)>(
+	export async function bind<F extends (() => Promise<any>)> (
 		f: F
 	): Promise<Result<Awaited<ReturnType<F>>>> {
 		try {
